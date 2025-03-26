@@ -33,6 +33,7 @@
 
 # Build Directory
 \build
+\QuasiSpaceMapDeployed
 
 # Other
 *.txt.user
