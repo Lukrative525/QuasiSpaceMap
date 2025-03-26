@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/in-game map.png</file>
+        <file>images/quasi 0.png</file>
+        <file>images/quasi 1.png</file>
+        <file>images/quasi 2.png</file>
+        <file>images/quasi 3.png</file>
+        <file>images/quasi 4.png</file>
+        <file>images/quasi 5.png</file>
+        <file>images/quasi 6.png</file>
+        <file>images/quasi 7.png</file>
+        <file>images/quasi 8.png</file>
+        <file>images/quasi 9.png</file>
+        <file>images/quasi 10.png</file>
+        <file>images/quasi 11.png</file>
+        <file>images/quasi 12.png</file>
+        <file>images/quasi 13.png</file>
+        <file>images/quasi 14.png</file>
+        <file>cursors/cursor_0.png</file>
+        <file>cursors/cursor_1.png</file>
+        <file>cursors/cursor_2.png</file>
+        <file>cursors/cursor_3.png</file>
+    </qresource>
+</RCC>
