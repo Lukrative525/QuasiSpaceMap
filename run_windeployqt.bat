@@ -4,7 +4,7 @@ setlocal
 :: Define paths
 set QT_PATH=C:\Qt\6.8.0\msvc2022_64\bin
 set BUILD_DIR=C:\Users\Luke\Documents\Games\Star Control II\QuasiSpaceMap\build\Desktop_Qt_6_8_0_MSVC2022_64bit-Release
-set TARGET_DIR=C:\Users\Luke\Documents\Games\Star Control II\QuasiSpaceMap\QuasiSpaceMapDeployed
+set TARGET_DIR=C:\Users\Luke\Documents\Games\Star Control II\QuasiSpaceMapDeployed
 
 :: Create target directory if it doesn’t exist
 if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"
