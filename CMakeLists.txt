@@ -29,8 +29,10 @@ target_link_libraries(QuasiSpaceMapLibrary
         Qt6::Core
 )
 
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.rc")
+
 # QuasiSpaceMap Application
-add_executable(QuasiSpaceMap WIN32)
+add_executable(QuasiSpaceMap WIN32 ${APP_ICON_RESOURCE_WINDOWS})
 target_sources(QuasiSpaceMap
     PRIVATE
         graphicsviewer.cpp
