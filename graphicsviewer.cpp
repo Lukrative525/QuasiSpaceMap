@@ -22,10 +22,8 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
 {
     QPointF mouse_position = mapToScene(event->pos());
 
-    int mouse_position_x = mouse_position.x();
-    int mouse_position_y = mouse_position.y();
-    int grid_index_x = calculateGridIndex(mouse_position_x);
-    int grid_index_y = calculateGridIndex(mouse_position_y);
+    int grid_index_x = calculateGridIndex(mouse_position.x());
+    int grid_index_y = calculateGridIndex(mouse_position.y());
 
     setCursorPosition(grid_index_x, grid_index_y);
 }
@@ -34,8 +32,6 @@ void GraphicsViewer::mousePressEvent(QMouseEvent* event)
 {
     QPointF mouse_position = mapToScene(event->pos());
 
-    int mouse_position_x = mouse_position.x();
-    int mouse_position_y = mouse_position.y();
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
     boundGridIndexX(grid_index_x);
