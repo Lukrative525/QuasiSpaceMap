@@ -24,8 +24,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
 
 private:
-    void loadCursors();
-    void selectCursor(int index);
+    void loadCursor();
     void setCursorPosition(int grid_index_x, int grid_index_y);
     void loadHyperSpaceMap();
     void loadQuasiSpaceMaps();
@@ -34,11 +33,13 @@ private:
     void boundGridIndexX(int& grid_index_x);
     void boundGridIndexY(int& grid_index_y);
     int calculatePixelCoordinate(int grid_index);
-    int cursor_index;
+    void calculateScaleFactor();
     const static int number_quasi_space_maps{15};
-    std::vector<QGraphicsPixmapItem*> cursors;
-    std::vector<QGraphicsPixmapItem*> quasi_space_maps;
+    const static int map_height{240};
+    int scale_factor{1};
+    QGraphicsPixmapItem* cursor;
     QGraphicsPixmapItem* hyper_space_map;
+    std::vector<QGraphicsPixmapItem*> quasi_space_maps;
 };
 
 #endif // GRAPHICSVIEWER_H

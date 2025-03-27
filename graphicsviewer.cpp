@@ -1,5 +1,7 @@
 #include <cmath>
+#include <QApplication>
 #include <QMouseEvent>
+#include <QScreen>
 
 #include "graphicsviewer.h"
 
@@ -8,14 +10,15 @@ GraphicsViewer::GraphicsViewer(QGraphicsScene* scene, QWidget* parent)
 {
     setCursor(Qt::BlankCursor);
     setMouseTracking(true);
-
     setStyleSheet("QGraphicsView{border: none; margin: 0px; padding: 0px; background-color: #000000;}");
+
+    calculateScaleFactor();
 
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
     showHyperSpaceMap();
 
-    loadCursors();
+    loadCursor();
 }
 
 void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
@@ -35,7 +38,7 @@ void GraphicsViewer::mousePressEvent(QMouseEvent* event)
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
     boundGridIndexX(grid_index_x);
-    boundGridIndexY(grid_index_y);;
+    boundGridIndexY(grid_index_y);
 
     emit mousePressed(grid_index_x, grid_index_y);
 }
@@ -56,21 +59,12 @@ void GraphicsViewer::showQuasiSpaceMap(int index)
     showMap(quasi_space_maps[index]);
 }
 
-void GraphicsViewer::loadCursors()
+void GraphicsViewer::loadCursor()
 {
-    cursors.reserve(4);
-
-    QString file_name;
-    file_name.reserve(64);
-    QPixmap cursor_pixmap;
-    for (int i{0}; i < 4; i++)
-    {
-        file_name = ":/cursors/cursor_" + QString::number(i) + ".png";
-        cursor_pixmap.load(file_name);
-        QGraphicsPixmapItem* cursor = new QGraphicsPixmapItem(cursor_pixmap);
-        cursors.emplace_back(cursor);
-        scene()->addItem(cursor);
-    }
+    QPixmap cursor_pixmap(":/images/cursor.png");
+    cursor = new QGraphicsPixmapItem(cursor_pixmap);
+    cursor->setScale(scale_factor);
+    scene()->addItem(cursor);
 }
 
 void GraphicsViewer::setCursorPosition(int grid_index_x, int grid_index_y)
@@ -80,26 +74,16 @@ void GraphicsViewer::setCursorPosition(int grid_index_x, int grid_index_y)
     int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
     int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
 
-    cursor_index = (grid_index_x % 2) * 1 + (grid_index_y % 2) * 2;
-    selectCursor(cursor_index);
-    cursors[cursor_index]->setPos(pixel_coordinate_x - 20, pixel_coordinate_y - 20);
-}
-
-void GraphicsViewer::selectCursor(int index)
-{
-    for (QGraphicsPixmapItem* cursor : cursors)
-    {
-        cursor->setVisible(false);
-    }
-    cursors[index]->setVisible(true);
+    cursor->setPos(pixel_coordinate_x - (4 * scale_factor), pixel_coordinate_y - (4 * scale_factor));
 }
 
 void GraphicsViewer::loadHyperSpaceMap()
 {
     QPixmap hyper_space_pixmap(":/images/in-game map.png");
     hyper_space_map = new QGraphicsPixmapItem(hyper_space_pixmap);
+    hyper_space_map->setScale(scale_factor);
     scene()->addItem(hyper_space_map);
-    setSceneRect(hyper_space_map->boundingRect());
+    setSceneRect(hyper_space_map->mapRectToScene(hyper_space_map->boundingRect()));
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
@@ -114,6 +98,7 @@ void GraphicsViewer::loadQuasiSpaceMaps()
         file_name = ":/images/quasi " + QString::number(i) + ".png";
         quasi_space_pixmap.load(file_name);
         QGraphicsPixmapItem* quasi_space_map = new QGraphicsPixmapItem(quasi_space_pixmap);
+        quasi_space_map->setScale(scale_factor);
         quasi_space_maps.emplace_back(quasi_space_map);
         scene()->addItem(quasi_space_map);
     }
@@ -130,7 +115,7 @@ void GraphicsViewer::setAllMapsInvisible()
 
 int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
 {
-    int grid_index = 2 * (pixel_coordinate / 9) + 1 * ((pixel_coordinate % 9) > 4);
+    int grid_index = std::floor(pixel_coordinate / scale_factor);
 
     return grid_index;
 }
@@ -161,7 +146,14 @@ void GraphicsViewer::boundGridIndexY(int& grid_index_y)
 
 int GraphicsViewer::calculatePixelCoordinate(int grid_index)
 {
-    int pixel_coordinate = std::ceil(4.5 * grid_index) + 2;
+    int pixel_coordinate = grid_index * scale_factor;
 
     return pixel_coordinate;
+}
+
+void GraphicsViewer::calculateScaleFactor()
+{
+    QScreen* screen = QApplication::primaryScreen();
+
+    scale_factor = std::floor(screen->geometry().height() / map_height);
 }
