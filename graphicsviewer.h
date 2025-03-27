@@ -37,6 +37,11 @@ private:
     const static int number_quasi_space_maps{15};
     const static int map_height{240};
     int scale_factor{1};
+    const static int left_grid_bound{7};
+    const static int right_grid_bound{248};
+    const static int top_grid_bound{10};
+    const static int bottom_grid_bound{236};
+    const static int cursor_center_offset{4};
     QGraphicsPixmapItem* cursor;
     QGraphicsPixmapItem* hyper_space_map;
     std::vector<QGraphicsPixmapItem*> quasi_space_maps;

@@ -74,7 +74,7 @@ void GraphicsViewer::setCursorPosition(int grid_index_x, int grid_index_y)
     int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
     int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
 
-    cursor->setPos(pixel_coordinate_x - (4 * scale_factor), pixel_coordinate_y - (4 * scale_factor));
+    cursor->setPos(pixel_coordinate_x - (cursor_center_offset * scale_factor), pixel_coordinate_y - (cursor_center_offset * scale_factor));
 }
 
 void GraphicsViewer::loadHyperSpaceMap()
@@ -122,25 +122,25 @@ int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
 
 void GraphicsViewer::boundGridIndexX(int& grid_index_x)
 {
-    if (grid_index_x < 7)
+    if (grid_index_x < left_grid_bound)
     {
-        grid_index_x = 7;
+        grid_index_x = left_grid_bound;
     }
-    else if (grid_index_x > 248)
+    else if (grid_index_x > right_grid_bound)
     {
-        grid_index_x = 248;
+        grid_index_x = right_grid_bound;
     }
 }
 
 void GraphicsViewer::boundGridIndexY(int& grid_index_y)
 {
-    if (grid_index_y < 10)
+    if (grid_index_y < top_grid_bound)
     {
-        grid_index_y = 10;
+        grid_index_y = top_grid_bound;
     }
-    else if (grid_index_y > 236)
+    else if (grid_index_y > bottom_grid_bound)
     {
-        grid_index_y = 236;
+        grid_index_y = bottom_grid_bound;
     }
 }
 
