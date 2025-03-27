@@ -11,8 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     graphics_viewer = new GraphicsViewer(scene, this);
     path_planner = new PathPlanner(this);
 
-    QLayout* parent_layout = ui->graphics_placeholder->parentWidget()->layout();
-    parent_layout->replaceWidget(ui->graphics_placeholder, graphics_viewer);
+    ui->graphics_placeholder->parentWidget()->layout()->replaceWidget(ui->graphics_placeholder, graphics_viewer);
     delete ui->graphics_placeholder;
 
     connect(path_planner, &PathPlanner::requestPrint, this, &MainWindow::handlePrintRequest);

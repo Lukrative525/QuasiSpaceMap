@@ -10,7 +10,9 @@ GraphicsViewer::GraphicsViewer(QGraphicsScene* scene, QWidget* parent)
 {
     setCursor(Qt::BlankCursor);
     setMouseTracking(true);
-    setStyleSheet("QGraphicsView{border: none; margin: 0px; padding: 0px; background-color: #000000;}");
+    setStyleSheet("QGraphicsView{border: none;}");
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     calculateScaleFactor();
 
@@ -84,6 +86,8 @@ void GraphicsViewer::loadHyperSpaceMap()
     hyper_space_map->setScale(scale_factor);
     scene()->addItem(hyper_space_map);
     setSceneRect(hyper_space_map->mapRectToScene(hyper_space_map->boundingRect()));
+    setMaximumHeight(sceneRect().height());
+    setMaximumWidth(sceneRect().width());
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
