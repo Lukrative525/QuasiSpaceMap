@@ -9,7 +9,7 @@ GraphicsViewer::GraphicsViewer(QGraphicsScene* scene, QWidget* parent)
     setCursor(Qt::BlankCursor);
     setMouseTracking(true);
 
-    setStyleSheet("QGraphicsView { border: none; margin: 0px; padding: 0px; background-color: #000000;}");
+    setStyleSheet("QGraphicsView{border: none; margin: 0px; padding: 0px; background-color: #000000;}");
 
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
