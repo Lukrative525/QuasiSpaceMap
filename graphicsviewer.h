@@ -41,6 +41,7 @@ private:
     void loadQuasiSpaceMaps();
     void loadTimer();
     void onTimer();
+    void resetCursorMovement();
     void setAllMapsInvisible();
     void setCosmeticCursorPosition(int grid_index_x, int grid_index_y);
     void setRealCursorPosition(int grid_index_x, int grid_index_y);

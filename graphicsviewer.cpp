@@ -195,11 +195,7 @@ void GraphicsViewer::handleArrowKeyRelease(QKeyEvent* event)
 
     if (!is_key_up_pressed && !is_key_down_pressed && !is_key_left_pressed && !is_key_right_pressed)
     {
-        timer->stop();
-        frames_arrow_key_held = 0;
-        frames_arrow_key_held_to_wait = 4;
-        arrow_key_moves_at_current_speed = 0;
-        arrow_key_increment = 1;
+        resetCursorMovement();
     }
 }
 
@@ -230,7 +226,7 @@ void GraphicsViewer::loadCursor()
     QPixmap cursor_pixmap(":/images/cursor.png");
     cursor = new QGraphicsPixmapItem(cursor_pixmap);
     cursor->setScale(scale_factor);
-    cursor->setZValue(1);
+    cursor->setZValue(2);
     scene()->addItem(cursor);
 }
 
@@ -259,7 +255,7 @@ void GraphicsViewer::loadQuasiSpaceMaps()
         quasi_space_pixmap.load(file_name);
         QGraphicsPixmapItem* quasi_space_map = new QGraphicsPixmapItem(quasi_space_pixmap);
         quasi_space_map->setScale(scale_factor);
-        quasi_space_map->setZValue(0);
+        quasi_space_map->setZValue(1);
         quasi_space_maps.emplace_back(quasi_space_map);
         scene()->addItem(quasi_space_map);
     }
@@ -268,7 +264,7 @@ void GraphicsViewer::loadQuasiSpaceMaps()
 void GraphicsViewer::loadTimer()
 {
     timer = new QTimer();
-    timer->setInterval(16);
+    timer->setInterval(33);
     connect(timer, &QTimer::timeout, this, &GraphicsViewer::onTimer);
 }
 
@@ -303,6 +299,15 @@ void GraphicsViewer::onTimer()
             arrow_key_moves_at_current_speed = 0;
         }
     }
+}
+
+void GraphicsViewer::resetCursorMovement()
+{
+    timer->stop();
+    frames_arrow_key_held = 0;
+    frames_arrow_key_held_to_wait = 4;
+    arrow_key_moves_at_current_speed = 0;
+    arrow_key_increment = 1;
 }
 
 void GraphicsViewer::setAllMapsInvisible()
@@ -345,6 +350,7 @@ void GraphicsViewer::setRealCursorPosition(int grid_index_x, int grid_index_y)
         is_key_down_pressed = false;
         is_key_left_pressed = false;
         is_key_right_pressed = false;
+        resetCursorMovement();
     }
 }
 
