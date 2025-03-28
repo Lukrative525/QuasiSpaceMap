@@ -14,13 +14,76 @@ GraphicsViewer::GraphicsViewer(QGraphicsScene* scene, QWidget* parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    calculateScaleFactor();
-
-    loadHyperSpaceMap();
-    loadQuasiSpaceMaps();
-    showHyperSpaceMap();
+    updateScaleFactor();
 
     loadCursor();
+    loadHyperSpaceMap();
+    loadQuasiSpaceMaps();
+    loadTimer();
+
+    showHyperSpaceMap();
+}
+
+void GraphicsViewer::showHyperSpaceMap()
+{
+    showMap(hyper_space_map);
+}
+
+void GraphicsViewer::showMap(QGraphicsPixmapItem* map)
+{
+    setAllMapsInvisible();
+    map->setVisible(true);
+}
+
+void GraphicsViewer::showQuasiSpaceMap(int index)
+{
+    showMap(quasi_space_maps[index]);
+}
+
+void GraphicsViewer::enterEvent(QEnterEvent *event)
+{
+    setFocus();
+    QGraphicsView::enterEvent(event);
+}
+
+void GraphicsViewer::leaveEvent(QEvent *event)
+{
+    clearFocus();
+    QWidget::leaveEvent(event);
+}
+
+void GraphicsViewer::keyPressEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    if (isArrowKey(event))
+    {
+        handleArrowKeyPress(event);
+    }
+    else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+    {
+        emit mousePressed(cursor_position_x, cursor_position_y);
+    }
+    else
+    {
+        QGraphicsView::keyPressEvent(event);
+    }
+}
+
+void GraphicsViewer::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    if (isArrowKey(event))
+    {
+        handleArrowKeyRelease(event);
+    }
 }
 
 void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
@@ -30,7 +93,7 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
 
-    setCursorPosition(grid_index_x, grid_index_y);
+    setCosmeticCursorPosition(grid_index_x, grid_index_y);
 }
 
 void GraphicsViewer::mousePressEvent(QMouseEvent* event)
@@ -43,85 +106,6 @@ void GraphicsViewer::mousePressEvent(QMouseEvent* event)
     boundGridIndexY(grid_index_y);
 
     emit mousePressed(grid_index_x, grid_index_y);
-}
-
-void GraphicsViewer::showMap(QGraphicsPixmapItem* map)
-{
-    setAllMapsInvisible();
-    map->setVisible(true);
-}
-
-void GraphicsViewer::showHyperSpaceMap()
-{
-    showMap(hyper_space_map);
-}
-
-void GraphicsViewer::showQuasiSpaceMap(int index)
-{
-    showMap(quasi_space_maps[index]);
-}
-
-void GraphicsViewer::loadCursor()
-{
-    QPixmap cursor_pixmap(":/images/cursor.png");
-    cursor = new QGraphicsPixmapItem(cursor_pixmap);
-    cursor->setScale(scale_factor);
-    scene()->addItem(cursor);
-}
-
-void GraphicsViewer::setCursorPosition(int grid_index_x, int grid_index_y)
-{
-    boundGridIndexX(grid_index_x);
-    boundGridIndexY(grid_index_y);
-    int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
-    int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
-
-    cursor->setPos(pixel_coordinate_x - (cursor_center_offset * scale_factor), pixel_coordinate_y - (cursor_center_offset * scale_factor));
-}
-
-void GraphicsViewer::loadHyperSpaceMap()
-{
-    QPixmap hyper_space_pixmap(":/images/in-game map.png");
-    hyper_space_map = new QGraphicsPixmapItem(hyper_space_pixmap);
-    hyper_space_map->setScale(scale_factor);
-    scene()->addItem(hyper_space_map);
-    setSceneRect(hyper_space_map->mapRectToScene(hyper_space_map->boundingRect()));
-    setMaximumHeight(sceneRect().height());
-    setMaximumWidth(sceneRect().width());
-}
-
-void GraphicsViewer::loadQuasiSpaceMaps()
-{
-    quasi_space_maps.reserve(number_quasi_space_maps);
-
-    QString file_name;
-    file_name.reserve(64);
-    QPixmap quasi_space_pixmap;
-    for (int i{0}; i < number_quasi_space_maps; i++)
-    {
-        file_name = ":/images/quasi " + QString::number(i) + ".png";
-        quasi_space_pixmap.load(file_name);
-        QGraphicsPixmapItem* quasi_space_map = new QGraphicsPixmapItem(quasi_space_pixmap);
-        quasi_space_map->setScale(scale_factor);
-        quasi_space_maps.emplace_back(quasi_space_map);
-        scene()->addItem(quasi_space_map);
-    }
-}
-
-void GraphicsViewer::setAllMapsInvisible()
-{
-    hyper_space_map->setVisible(false);
-    for (QGraphicsPixmapItem* quasi_space_map : quasi_space_maps)
-    {
-        quasi_space_map->setVisible(false);
-    }
-}
-
-int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
-{
-    int grid_index = std::floor(pixel_coordinate / scale_factor);
-
-    return grid_index;
 }
 
 void GraphicsViewer::boundGridIndexX(int& grid_index_x)
@@ -148,6 +132,13 @@ void GraphicsViewer::boundGridIndexY(int& grid_index_y)
     }
 }
 
+int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
+{
+    int grid_index = std::floor(pixel_coordinate / scale_factor);
+
+    return grid_index;
+}
+
 int GraphicsViewer::calculatePixelCoordinate(int grid_index)
 {
     int pixel_coordinate = grid_index * scale_factor;
@@ -155,7 +146,195 @@ int GraphicsViewer::calculatePixelCoordinate(int grid_index)
     return pixel_coordinate;
 }
 
-void GraphicsViewer::calculateScaleFactor()
+void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        is_key_up_pressed = true;
+        cursor_position_y -= 1;
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        is_key_down_pressed = true;
+        cursor_position_y += 1;
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        is_key_left_pressed = true;
+        cursor_position_x -= 1;
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        is_key_right_pressed = true;
+        cursor_position_x += 1;
+    }
+
+    setRealCursorPosition(cursor_position_x, cursor_position_y);
+
+    timer->start();
+}
+
+void GraphicsViewer::handleArrowKeyRelease(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        is_key_up_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        is_key_down_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        is_key_left_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        is_key_right_pressed = false;
+    }
+
+    if (!is_key_up_pressed && !is_key_down_pressed && !is_key_left_pressed && !is_key_right_pressed)
+    {
+        timer->stop();
+        frames_arrow_key_held = 0;
+        frames_arrow_key_held_to_wait = 4;
+        arrow_key_moves_at_current_speed = 0;
+        arrow_key_increment = 1;
+    }
+}
+
+bool GraphicsViewer::isArrowKey(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void GraphicsViewer::loadCursor()
+{
+    QPixmap cursor_pixmap(":/images/cursor.png");
+    cursor = new QGraphicsPixmapItem(cursor_pixmap);
+    cursor->setScale(scale_factor);
+    cursor->setZValue(1);
+    scene()->addItem(cursor);
+}
+
+void GraphicsViewer::loadHyperSpaceMap()
+{
+    QPixmap hyper_space_pixmap(":/images/in-game map.png");
+    hyper_space_map = new QGraphicsPixmapItem(hyper_space_pixmap);
+    hyper_space_map->setScale(scale_factor);
+    hyper_space_map->setZValue(0);
+    scene()->addItem(hyper_space_map);
+    setSceneRect(hyper_space_map->mapRectToScene(hyper_space_map->boundingRect()));
+    setMaximumHeight(sceneRect().height());
+    setMaximumWidth(sceneRect().width());
+}
+
+void GraphicsViewer::loadQuasiSpaceMaps()
+{
+    quasi_space_maps.reserve(number_quasi_space_maps);
+
+    QString file_name;
+    file_name.reserve(64);
+    QPixmap quasi_space_pixmap;
+    for (int i{0}; i < number_quasi_space_maps; i++)
+    {
+        file_name = ":/images/quasi " + QString::number(i) + ".png";
+        quasi_space_pixmap.load(file_name);
+        QGraphicsPixmapItem* quasi_space_map = new QGraphicsPixmapItem(quasi_space_pixmap);
+        quasi_space_map->setScale(scale_factor);
+        quasi_space_map->setZValue(0);
+        quasi_space_maps.emplace_back(quasi_space_map);
+        scene()->addItem(quasi_space_map);
+    }
+}
+
+void GraphicsViewer::loadTimer()
+{
+    timer = new QTimer();
+    timer->setInterval(33);
+    connect(timer, &QTimer::timeout, this, &GraphicsViewer::onTimer);
+}
+
+void GraphicsViewer::onTimer()
+{
+    if (frames_arrow_key_held < 36)
+    {
+        frames_arrow_key_held += 1;
+    }
+
+    if (frames_arrow_key_held % frames_arrow_key_held_to_wait == 0)
+    {
+        cursor_position_x += arrow_key_increment * (is_key_right_pressed - is_key_left_pressed);
+        cursor_position_y += arrow_key_increment * (is_key_down_pressed - is_key_up_pressed);
+        setCosmeticCursorPosition(cursor_position_x, cursor_position_y);
+        setRealCursorPosition(cursor_position_x, cursor_position_y);
+
+        if (arrow_key_moves_at_current_speed < 3)
+        {
+            arrow_key_moves_at_current_speed += 1;
+        }
+        else
+        {
+            if (frames_arrow_key_held_to_wait > 1)
+            {
+                frames_arrow_key_held_to_wait -= 1;
+            }
+            else
+            {
+                arrow_key_increment = 2;
+            }
+            arrow_key_moves_at_current_speed = 0;
+        }
+    }
+}
+
+void GraphicsViewer::setAllMapsInvisible()
+{
+    hyper_space_map->setVisible(false);
+    for (QGraphicsPixmapItem* quasi_space_map : quasi_space_maps)
+    {
+        quasi_space_map->setVisible(false);
+    }
+}
+
+void GraphicsViewer::setCosmeticCursorPosition(int grid_index_x, int grid_index_y)
+{
+    boundGridIndexX(grid_index_x);
+    boundGridIndexY(grid_index_y);
+    cursor_position_x = grid_index_x;
+    cursor_position_y = grid_index_y;
+    int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
+    int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
+
+    cursor->setPos(pixel_coordinate_x - (cursor_center_offset * scale_factor), pixel_coordinate_y - (cursor_center_offset * scale_factor));
+}
+
+void GraphicsViewer::setRealCursorPosition(int grid_index_x, int grid_index_y)
+{
+    QPointF scenePos(calculatePixelCoordinate(grid_index_x), calculatePixelCoordinate(grid_index_y));
+    QPoint viewportPos = mapFromScene(scenePos);
+    QPoint globalPos = viewport()->mapToGlobal(viewportPos);
+    QCursor::setPos(globalPos);
+}
+
+void GraphicsViewer::updateScaleFactor()
 {
     QScreen* screen = QApplication::primaryScreen();
 
