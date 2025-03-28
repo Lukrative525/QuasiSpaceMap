@@ -268,7 +268,7 @@ void GraphicsViewer::loadQuasiSpaceMaps()
 void GraphicsViewer::loadTimer()
 {
     timer = new QTimer();
-    timer->setInterval(33);
+    timer->setInterval(16);
     connect(timer, &QTimer::timeout, this, &GraphicsViewer::onTimer);
 }
 
@@ -328,10 +328,24 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_index_x, int grid_index_
 
 void GraphicsViewer::setRealCursorPosition(int grid_index_x, int grid_index_y)
 {
-    QPointF scenePos(calculatePixelCoordinate(grid_index_x), calculatePixelCoordinate(grid_index_y));
-    QPoint viewportPos = mapFromScene(scenePos);
-    QPoint globalPos = viewport()->mapToGlobal(viewportPos);
-    QCursor::setPos(globalPos);
+    if (this->hasFocus())
+    {
+        boundGridIndexX(grid_index_x);
+        boundGridIndexY(grid_index_y);
+        cursor_position_x = grid_index_x;
+        cursor_position_y = grid_index_y;
+        QPointF scene_position(calculatePixelCoordinate(cursor_position_x), calculatePixelCoordinate(cursor_position_y));
+        QPoint viewport_position = mapFromScene(scene_position);
+        QPoint global_position = viewport()->mapToGlobal(viewport_position);
+        QCursor::setPos(global_position);
+    }
+    else
+    {
+        is_key_up_pressed = false;
+        is_key_down_pressed = false;
+        is_key_left_pressed = false;
+        is_key_right_pressed = false;
+    }
 }
 
 void GraphicsViewer::updateScaleFactor()
