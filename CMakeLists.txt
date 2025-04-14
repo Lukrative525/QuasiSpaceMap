@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(QuasiSpaceMap LANGUAGES CXX VERSION 0.1.0)
 
-FIND_PACKAGE(Qt6 REQUIRED COMPONENTS GUI Widgets)
+FIND_PACKAGE(Qt6 REQUIRED COMPONENTS GUI OpenGLWidgets)
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -35,6 +35,12 @@ set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.rc")
 add_executable(QuasiSpaceMap WIN32 ${APP_ICON_RESOURCE_WINDOWS})
 target_sources(QuasiSpaceMap
     PRIVATE
+        image.cpp
+        image.h
+        imageinstance.cpp
+        imageinstance.h
+        imageviewer.cpp
+        imageviewer.h
         graphicsviewer.cpp
         graphicsviewer.h
         main.cpp
@@ -48,6 +54,6 @@ target_compile_features(QuasiSpaceMap PUBLIC cxx_std_17)
 target_include_directories(QuasiSpaceMap PRIVATE)
 target_link_libraries(QuasiSpaceMap
     PRIVATE
-        Qt6::Widgets
+        Qt6::OpenGLWidgets
         QuasiSpaceMapLibrary
 )

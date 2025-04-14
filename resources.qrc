@@ -17,5 +17,7 @@
         <file>images/quasi 13.png</file>
         <file>images/quasi 14.png</file>
         <file>images/cursor.png</file>
+        <file>shaders/fragment_shader.frag</file>
+        <file>shaders/vertex_shader.vert</file>
     </qresource>
 </RCC>

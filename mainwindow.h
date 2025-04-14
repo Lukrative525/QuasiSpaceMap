@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QGraphicsScene>
 #include <QMainWindow>
 
 #include "graphicsviewer.h"
@@ -28,15 +27,16 @@ public slots:
     void resetMap();
     void updateMap(int index);
 
-private:
-    QString formatCoordinates(QPointF scene_position);
-    void changeEvent(QEvent* event) override;
+protected:
     void keyPressEvent(QKeyEvent* event) override;
     void showEvent(QShowEvent* event) override;
+
+private:
+    QString formatCoordinates(QPointF scene_position);
     void print(QString message);
+
     GraphicsViewer* graphics_viewer;
     PathPlanner* path_planner;
-    QGraphicsScene* scene;
     QPoint original_position;
     QSize original_size;
     Ui::MainWindow* ui;

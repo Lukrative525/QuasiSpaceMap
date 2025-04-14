@@ -7,17 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    scene = new QGraphicsScene(this);
-    graphics_viewer = new GraphicsViewer(scene, this);
+    graphics_viewer = new GraphicsViewer(this);
     path_planner = new PathPlanner(this);
 
-    ui->graphics_placeholder->parentWidget()->layout()->replaceWidget(ui->graphics_placeholder, graphics_viewer);
-    delete ui->graphics_placeholder;
+    ui->graphics_frame_layout->addWidget(graphics_viewer);
 
     connect(path_planner, &PathPlanner::requestPrint, this, &MainWindow::handlePrintRequest);
     connect(path_planner, &PathPlanner::requestResetMap, this, &MainWindow::resetMap);
     connect(path_planner, &PathPlanner::requestUpdateMap, this, &MainWindow::updateMap);
-    connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
+    // connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
 }
 
 MainWindow::~MainWindow()
@@ -37,13 +35,13 @@ void MainWindow::handlePrintRequest(QString message)
 
 void MainWindow::resetMap()
 {
-    ui->plainTextEdit->clear();
-    graphics_viewer->showHyperSpaceMap();
+    ui->plain_text_edit->clear();
+    // graphics_viewer->showHyperSpaceMap();
 }
 
 void MainWindow::updateMap(int index)
 {
-    graphics_viewer->showQuasiSpaceMap(index);
+    // graphics_viewer->showQuasiSpaceMap(index);
 }
 
 QString MainWindow::formatCoordinates(QPointF coordinates)
@@ -51,19 +49,6 @@ QString MainWindow::formatCoordinates(QPointF coordinates)
     QString formatted_coordinates = "(" + QString::number(coordinates.x()) + ", " + QString::number(coordinates.y()) + ")\n";
 
     return formatted_coordinates;
-}
-
-void MainWindow::changeEvent(QEvent* event)
-{
-    if (event->type() == QEvent::WindowStateChange)
-    {
-        if (isMaximized())
-        {
-            setWindowFlags(Qt::FramelessWindowHint);
-            showFullScreen();
-        }
-    }
-    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
@@ -90,6 +75,6 @@ void MainWindow::showEvent(QShowEvent* event)
 
 void MainWindow::print(QString message)
 {
-    ui->plainTextEdit->insertPlainText(message + "\n");
+    ui->plain_text_edit->insertPlainText(message + "\n");
 }
 
