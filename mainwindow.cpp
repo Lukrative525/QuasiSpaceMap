@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(path_planner, &PathPlanner::requestPrint, this, &MainWindow::handlePrintRequest);
     connect(path_planner, &PathPlanner::requestResetMap, this, &MainWindow::resetMap);
     connect(path_planner, &PathPlanner::requestUpdateMap, this, &MainWindow::updateMap);
-    // connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
+    connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
 }
 
 MainWindow::~MainWindow()

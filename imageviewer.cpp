@@ -15,16 +15,9 @@ ImageViewer::ImageViewer(QWidget *parent):
 {
 }
 
-void ImageViewer::addImage(const QString& file_path)
+void ImageViewer::queueImageToAdd(const QString& file_path)
 {
-    images.emplace_back(file_path);
-    Image& image = images.back();
-
-    initializeTexture(image);
-    initializeImageGeometry(image);
-    updateInstanceBuffer(image);
-
-    updateGeometry();
+    image_queue.enqueue(file_path);
 }
 
 void ImageViewer::initializeGL()
@@ -45,11 +38,13 @@ void ImageViewer::initializeGL()
     texture_address = glGetUniformLocation(shader_program, "texture_map");
     glUniform1i(texture_address, 0);
 
-    runAfterInitializeGL();
+    addQueuedImages();
 }
 
 void ImageViewer::paintGL()
 {
+    addQueuedImages();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(shader_program);
@@ -90,8 +85,6 @@ void ImageViewer::resizeGL(int new_width, int new_height)
     model_view_projection.ortho(0, new_width, new_height, 0, -1, 1);
 }
 
-void ImageViewer::runAfterInitializeGL() {}
-
 QSize ImageViewer::sizeHint() const
 {
     float extremum_x{0};
@@ -114,6 +107,30 @@ QSize ImageViewer::sizeHint() const
     }
 
     return QSize(std::ceil(extremum_x), std::ceil(extremum_y));
+}
+
+void ImageViewer::addImage(const QString& file_path)
+{
+    if (context() && context()->isValid())
+    {
+        images.emplace_back(file_path);
+        Image& image = images.back();
+
+        initializeTexture(image);
+        initializeImageGeometry(image);
+        updateInstanceBuffer(image);
+
+        updateGeometry();
+    }
+}
+
+void ImageViewer::addQueuedImages()
+{
+    while (!image_queue.isEmpty())
+    {
+        QString file_path = image_queue.dequeue();
+        addImage(file_path);
+    }
 }
 
 void ImageViewer::initializeImageGeometry(Image& image)

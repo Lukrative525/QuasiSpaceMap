@@ -363,6 +363,7 @@
 
 
 
+#include <QCursor>
 #include <QMouseEvent>
 
 #include "graphicsviewer.h"
@@ -370,8 +371,27 @@
 GraphicsViewer::GraphicsViewer(QWidget *parent):
     ImageViewer{parent}
 {
-    // setCursor(Qt::BlankCursor);
+    setCursor(Qt::BlankCursor);
     setMouseTracking(true);
+
+    loadAssets();
+}
+
+void GraphicsViewer::showHyperSpaceMap()
+{
+    showMap(1);
+    update();
+}
+
+void GraphicsViewer::showMap(int image_index)
+{
+    setAllMapsInvisible();
+    images[image_index].instances[0].setIsActive(true);
+}
+
+void GraphicsViewer::showQuasiSpaceMap(int quasi_space_index)
+{
+    showMap(quasi_space_index + 2);
 }
 
 void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
@@ -381,9 +401,19 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
 
-    qDebug() << grid_index_x << ", " << grid_index_y;
+    setCosmeticCursorPosition(grid_index_x, grid_index_y);
+}
 
-    // setCosmeticCursorPosition(grid_index_x, grid_index_y);
+void GraphicsViewer::mousePressEvent(QMouseEvent* event)
+{
+    QPointF mouse_position = event->pos();
+
+    int grid_index_x = calculateGridIndex(mouse_position.x());
+    int grid_index_y = calculateGridIndex(mouse_position.y());
+    boundGridIndexX(grid_index_x);
+    boundGridIndexY(grid_index_y);
+
+    emit mousePressed(grid_index_x, grid_index_y);
 }
 
 void GraphicsViewer::resizeGL(int new_width, int new_height)
@@ -395,9 +425,28 @@ void GraphicsViewer::resizeGL(int new_width, int new_height)
     updateScaleFactor();
 }
 
-void GraphicsViewer::runAfterInitializeGL()
+void GraphicsViewer::boundGridIndexX(int& grid_index_x)
 {
-    addImage(":/images/in-game map.png");
+    if (grid_index_x < left_grid_bound)
+    {
+        grid_index_x = left_grid_bound;
+    }
+    else if (grid_index_x > right_grid_bound)
+    {
+        grid_index_x = right_grid_bound;
+    }
+}
+
+void GraphicsViewer::boundGridIndexY(int& grid_index_y)
+{
+    if (grid_index_y < top_grid_bound)
+    {
+        grid_index_y = top_grid_bound;
+    }
+    else if (grid_index_y > bottom_grid_bound)
+    {
+        grid_index_y = bottom_grid_bound;
+    }
 }
 
 int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
@@ -407,20 +456,78 @@ int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
     return grid_index;
 }
 
+int GraphicsViewer::calculatePixelCoordinate(int grid_index)
+{
+    int pixel_coordinate = grid_index * scale_factor;
+
+    return pixel_coordinate;
+}
+
+void GraphicsViewer::loadAssets()
+{
+    loadCursor();
+    loadHyperSpaceMap();
+    loadQuasiSpaceMaps();
+}
+
+void GraphicsViewer::loadCursor()
+{
+    queueImageToAdd(":/images/cursor.png");
+}
+
+void GraphicsViewer::loadHyperSpaceMap()
+{
+    queueImageToAdd(":/images/in-game map.png");
+}
+
+void GraphicsViewer::loadQuasiSpaceMaps()
+{
+    QString file_name;
+    file_name.reserve(64);
+
+    for (int i{0}; i < number_quasi_space_maps; i++)
+    {
+        file_name = ":/images/quasi " + QString::number(i) + ".png";
+        queueImageToAdd(file_name);
+    }
+}
+
+void GraphicsViewer::setAllMapsInvisible()
+{
+    images[1].instances[0].setIsActive(false);
+    for (int index{1}; index < number_quasi_space_maps + 2; index++)
+    {
+        images[index].instances[0].setIsActive(false);
+    }
+}
+
+void GraphicsViewer::setCosmeticCursorPosition(int grid_index_x, int grid_index_y)
+{
+    boundGridIndexX(grid_index_x);
+    boundGridIndexY(grid_index_y);
+    cursor_position_x = grid_index_x;
+    cursor_position_y = grid_index_y;
+    int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
+    int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
+
+    images[0].instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale_factor));
+    images[0].instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale_factor));
+
+    update();
+}
+
 void GraphicsViewer::updateScaleFactor()
 {
-    int new_scale_factor = std::floor(height / images[0].instances[0].size_y_base());
-
-    if (new_scale_factor < 1)
+    if (images.size() < 1)
     {
-        new_scale_factor = 1;
+        return;
     }
+
+    int new_scale_factor = std::max(1, static_cast<int>(std::floor(height / images[1].instances[0].size_y_base())));
 
     if (scale_factor != new_scale_factor)
     {
         scale_factor = new_scale_factor;
-
-        qDebug() << scale_factor;
 
         for (Image& image : images)
         {
