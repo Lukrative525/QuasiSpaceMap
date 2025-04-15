@@ -646,17 +646,14 @@ void GraphicsViewer::onTimer()
     {
         move_speed = 2;
     }
-    else if (move_delay_fuse == -8)
-    {
-        move_speed = 3;
-    }
 }
 
 void GraphicsViewer::resetCursorMovement()
 {
     timer->stop();
-    timer->setInterval(34);
-    move_delay_length = 4;
+    timer->setInterval(32);
+    move_delay_length = 3;
+    move_delay_fuse_start_length = 12;
     move_delay_fuse = move_delay_fuse_start_length;
     move_speed = 1;
 }

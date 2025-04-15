@@ -143,8 +143,8 @@ private:
     int scale_factor{1};
 
     int move_delay_length;
+    int move_delay_fuse_start_length;
     int move_delay_fuse;
-    int move_delay_fuse_start_length{16};
     int move_speed;
     QTimer* timer;
 
