@@ -112,14 +112,17 @@ QSize ImageViewer::sizeHint() const
     {
         for (const ImageInstance& instance : image.instances)
         {
-            if (instance.x() + instance.size_x() > extremum_x)
+            if (instance.is_active())
             {
-                extremum_x = instance.x() + instance.size_x();
-            }
+                if (instance.x() + instance.size_x() > extremum_x)
+                {
+                    extremum_x = instance.x() + instance.size_x();
+                }
 
-            if (instance.y() + instance.size_y() > extremum_y)
-            {
-                extremum_y = instance.y() + instance.size_y();
+                if (instance.y() + instance.size_y() > extremum_y)
+                {
+                    extremum_y = instance.y() + instance.size_y();
+                }
             }
         }
     }

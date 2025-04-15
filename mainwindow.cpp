@@ -54,23 +54,28 @@ void MainWindow::changeEvent(QEvent* event)
     {
         if (isMaximized())
         {
+            wasMaximized = true;
             setWindowFlags(Qt::FramelessWindowHint);
             showFullScreen();
         }
     }
+
     QMainWindow::changeEvent(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Escape)
+    if (event->key() == Qt::Key_Escape && wasMaximized)
     {
         setWindowFlags(Qt::Window);
         showNormal();
 
         resize(original_size);
         move(original_position);
+
+        wasMaximized = false;
     }
+
     QMainWindow::keyPressEvent(event);
 }
 

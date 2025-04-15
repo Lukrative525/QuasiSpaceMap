@@ -41,5 +41,6 @@ private:
     QPoint original_position;
     QSize original_size;
     Ui::MainWindow* ui;
+    bool wasMaximized{false};
 };
 #endif // MAINWINDOW_H
