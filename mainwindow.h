@@ -28,6 +28,7 @@ public slots:
     void updateMap(int index);
 
 protected:
+    void changeEvent(QEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void showEvent(QShowEvent* event) override;
 

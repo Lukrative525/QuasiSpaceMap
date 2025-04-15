@@ -48,11 +48,17 @@ void MainWindow::updateMap(int index)
     graphics_viewer->showQuasiSpaceMap(index);
 }
 
-QString MainWindow::formatCoordinates(QPointF coordinates)
+void MainWindow::changeEvent(QEvent* event)
 {
-    QString formatted_coordinates = "(" + QString::number(coordinates.x()) + ", " + QString::number(coordinates.y()) + ")\n";
-
-    return formatted_coordinates;
+    if (event->type() == QEvent::WindowStateChange)
+    {
+        if (isMaximized())
+        {
+            setWindowFlags(Qt::FramelessWindowHint);
+            showFullScreen();
+        }
+    }
+    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
@@ -75,6 +81,13 @@ void MainWindow::showEvent(QShowEvent* event)
         original_size = size();
         original_position = pos();
     }
+}
+
+QString MainWindow::formatCoordinates(QPointF coordinates)
+{
+    QString formatted_coordinates = "(" + QString::number(coordinates.x()) + ", " + QString::number(coordinates.y()) + ")\n";
+
+    return formatted_coordinates;
 }
 
 void MainWindow::print(QString message)
