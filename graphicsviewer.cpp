@@ -353,6 +353,8 @@ void GraphicsViewer::updateScaleFactor()
             }
         }
 
+        setCosmeticCursorPosition(cursor_position_x, cursor_position_y);
+
         updateGeometry();
     }
 }
