@@ -642,11 +642,11 @@ void GraphicsViewer::onTimer()
         move_delay_length -= 1;
         move_delay_fuse = move_delay_length * 4;
     }
-    else if (move_delay_fuse == -8)
+    else if (move_delay_fuse == -4)
     {
         move_speed = 2;
     }
-    else if (move_delay_fuse == -16)
+    else if (move_delay_fuse == -8)
     {
         move_speed = 3;
     }

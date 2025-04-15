@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(path_planner, &PathPlanner::requestResetMap, this, &MainWindow::resetMap);
     connect(path_planner, &PathPlanner::requestUpdateMap, this, &MainWindow::updateMap);
     connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
+
+    print("Origin:      ");
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +77,6 @@ void MainWindow::showEvent(QShowEvent* event)
 
 void MainWindow::print(QString message)
 {
-    ui->plain_text_edit->insertPlainText(message + "\n");
+    ui->plain_text_edit->insertPlainText(message);
 }
 
