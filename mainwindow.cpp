@@ -5,6 +5,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    QFontDatabase::addApplicationFont(":/fonts/digital-7 (mono).ttf");
+
     ui->setupUi(this);
 
     graphics_viewer = new GraphicsViewer(this);
