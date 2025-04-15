@@ -10,6 +10,8 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
     setMouseTracking(true);
 
     loadAssets();
+
+    setAttribute(Qt::WA_NativeWindow);
 }
 
 void GraphicsViewer::showHyperSpaceMap()
