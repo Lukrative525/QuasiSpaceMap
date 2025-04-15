@@ -36,12 +36,12 @@ void MainWindow::handlePrintRequest(QString message)
 void MainWindow::resetMap()
 {
     ui->plain_text_edit->clear();
-    // graphics_viewer->showHyperSpaceMap();
+    graphics_viewer->showHyperSpaceMap();
 }
 
 void MainWindow::updateMap(int index)
 {
-    // graphics_viewer->showQuasiSpaceMap(index);
+    graphics_viewer->showQuasiSpaceMap(index);
 }
 
 QString MainWindow::formatCoordinates(QPointF coordinates)

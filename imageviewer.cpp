@@ -15,9 +15,24 @@ ImageViewer::ImageViewer(QWidget *parent):
 {
 }
 
-void ImageViewer::queueImageToAdd(const QString& file_path)
+void ImageViewer::addImage(const QString& file_path)
 {
-    image_queue.enqueue(file_path);
+    if (context() && context()->isValid())
+    {
+        images.emplace_back(file_path);
+        Image& image = images.back();
+
+        initializeTexture(image);
+        initializeImageGeometry(image);
+        updateInstanceBuffer(image);
+
+        updateGeometry();
+    }
+}
+
+void ImageViewer::addToQueuedActions(std::function<void()> action)
+{
+    queued_actions.push(std::move(action));
 }
 
 void ImageViewer::initializeGL()
@@ -38,12 +53,12 @@ void ImageViewer::initializeGL()
     texture_address = glGetUniformLocation(shader_program, "texture_map");
     glUniform1i(texture_address, 0);
 
-    addQueuedImages();
+    flushQueuedActions();
 }
 
 void ImageViewer::paintGL()
 {
-    addQueuedImages();
+    flushQueuedActions();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -65,13 +80,16 @@ void ImageViewer::paintGL()
                 instance_data.push_back(instance.getData());
             }
 
-        glBufferData(GL_ARRAY_BUFFER, instance_data.size() * sizeof(InstanceData), instance_data.data(), GL_DYNAMIC_DRAW);
+        if (instance_data.size() > 0)
+        {
+            glBufferData(GL_ARRAY_BUFFER, instance_data.size() * sizeof(InstanceData), instance_data.data(), GL_DYNAMIC_DRAW);
 
-        glBindVertexArray(image.vertex_array);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, image.texture);
+            glBindVertexArray(image.vertex_array);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, image.texture);
 
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, image.instances.size());
+            glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, image.instances.size());
+        }
     }
 
     glBindVertexArray(0);
@@ -109,27 +127,11 @@ QSize ImageViewer::sizeHint() const
     return QSize(std::ceil(extremum_x), std::ceil(extremum_y));
 }
 
-void ImageViewer::addImage(const QString& file_path)
+void ImageViewer::flushQueuedActions()
 {
-    if (context() && context()->isValid())
-    {
-        images.emplace_back(file_path);
-        Image& image = images.back();
-
-        initializeTexture(image);
-        initializeImageGeometry(image);
-        updateInstanceBuffer(image);
-
-        updateGeometry();
-    }
-}
-
-void ImageViewer::addQueuedImages()
-{
-    while (!image_queue.isEmpty())
-    {
-        QString file_path = image_queue.dequeue();
-        addImage(file_path);
+    while (!queued_actions.empty()) {
+        queued_actions.front()();
+        queued_actions.pop();
     }
 }
 

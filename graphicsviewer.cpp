@@ -379,19 +379,20 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
 
 void GraphicsViewer::showHyperSpaceMap()
 {
-    showMap(1);
-    update();
+    showMap(0);
 }
 
 void GraphicsViewer::showMap(int image_index)
 {
     setAllMapsInvisible();
     images[image_index].instances[0].setIsActive(true);
+
+    update();
 }
 
 void GraphicsViewer::showQuasiSpaceMap(int quasi_space_index)
 {
-    showMap(quasi_space_index + 2);
+    showMap(quasi_space_index + 1);
 }
 
 void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
@@ -406,7 +407,7 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
 
 void GraphicsViewer::mousePressEvent(QMouseEvent* event)
 {
-    QPointF mouse_position = event->pos();
+    QPoint mouse_position = event->pos();
 
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
@@ -465,19 +466,19 @@ int GraphicsViewer::calculatePixelCoordinate(int grid_index)
 
 void GraphicsViewer::loadAssets()
 {
-    loadCursor();
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
+    loadCursor();
 }
 
 void GraphicsViewer::loadCursor()
 {
-    queueImageToAdd(":/images/cursor.png");
+    addToQueuedActions([this]() {addImage(":/images/cursor.png");});
 }
 
 void GraphicsViewer::loadHyperSpaceMap()
 {
-    queueImageToAdd(":/images/in-game map.png");
+    addToQueuedActions([this]() {addImage(":/images/in-game map.png");});
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
@@ -488,14 +489,14 @@ void GraphicsViewer::loadQuasiSpaceMaps()
     for (int i{0}; i < number_quasi_space_maps; i++)
     {
         file_name = ":/images/quasi " + QString::number(i) + ".png";
-        queueImageToAdd(file_name);
+        addToQueuedActions([this, file_name]() {addImage(file_name);});
+        addToQueuedActions([this]() {images.back().instances[0].setIsActive(false);});
     }
 }
 
 void GraphicsViewer::setAllMapsInvisible()
 {
-    images[1].instances[0].setIsActive(false);
-    for (int index{1}; index < number_quasi_space_maps + 2; index++)
+    for (int index{0}; index < number_quasi_space_maps + 1; index++)
     {
         images[index].instances[0].setIsActive(false);
     }
@@ -510,8 +511,8 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_index_x, int grid_index_
     int pixel_coordinate_x = calculatePixelCoordinate(grid_index_x);
     int pixel_coordinate_y = calculatePixelCoordinate(grid_index_y);
 
-    images[0].instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale_factor));
-    images[0].instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale_factor));
+    images.back().instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale_factor));
+    images.back().instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale_factor));
 
     update();
 }

@@ -4,7 +4,7 @@
 #include <QMatrix4x4>
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLWidget>
-#include <QQueue>
+#include <queue>
 #include <vector>
 
 #include "image.h"
@@ -14,9 +14,10 @@ class ImageViewer: public QOpenGLWidget, protected QOpenGLExtraFunctions
     Q_OBJECT
 public:
     explicit ImageViewer(QWidget* parent = nullptr);
-    void queueImageToAdd(const QString& file_path);
 
 protected:
+    void addImage(const QString& file_path);
+    void addToQueuedActions(std::function<void()> action);
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int new_width, int new_height) override;
@@ -25,8 +26,7 @@ protected:
     std::vector<Image> images;
 
 private:
-    void addImage(const QString& file_path);
-    void addQueuedImages();
+    void flushQueuedActions();
     void initializeImageGeometry(Image& image);
     void initializeShaderProgram();
     void initializeTexture(Image& image);
@@ -35,7 +35,8 @@ private:
     void verifyProgramLinking(const uint& shader_to_verify);
     void verifyShaderCompilation(const uint& shader_to_verify);
 
-    QQueue<QString> image_queue;
+    std::queue<std::function<void()>> queued_actions;
+
     QMatrix4x4 model_view_projection;
     int model_view_projection_address{0};
     std::array<float, 20> quad_vertices;
