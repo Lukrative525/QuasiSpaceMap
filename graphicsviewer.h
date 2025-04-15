@@ -94,6 +94,10 @@ signals:
     void mousePressed(int grid_index_x, int grid_index_y);
 
 protected:
+    void enterEvent(QEnterEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+    void leaveEvent(QEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void resizeGL(int new_width, int new_height) override;
@@ -103,13 +107,25 @@ private:
     void boundGridIndexY(int& grid_index_y);
     int calculateGridIndex(int pixel_coordinate);
     int calculatePixelCoordinate(int grid_index);
+    void handleArrowKeyPress(QKeyEvent* event);
+    void handleArrowKeyRelease(QKeyEvent* event);
+    bool isArrowKey(QKeyEvent* event);
     void loadAssets();
     void loadCursor();
     void loadHyperSpaceMap();
     void loadQuasiSpaceMaps();
+    void loadTimer();
+    void onTimer();
+    void resetCursorMovement();
     void setAllMapsInvisible();
     void setCosmeticCursorPosition(int grid_index_x, int grid_index_y);
+    void setRealCursorPosition(int grid_index_x, int grid_index_y);
     void updateScaleFactor();
+
+    bool is_key_left_pressed{false};
+    bool is_key_right_pressed{false};
+    bool is_key_up_pressed{false};
+    bool is_key_down_pressed{false};
 
     const static int cursor_center_offset{4};
     int cursor_position_x{0};
@@ -125,6 +141,14 @@ private:
     int width;
 
     int scale_factor{1};
+
+    int arrow_key_moves_at_current_speed;
+    int arrow_key_increment;
+    int frames_arrow_key_held;
+    int frames_arrow_key_held_to_wait;
+    QTimer* timer;
+
+
 };
 
 #endif // GRAPHICSVIEWER_H

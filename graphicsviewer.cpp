@@ -365,6 +365,7 @@
 
 #include <QCursor>
 #include <QMouseEvent>
+#include <QTimer>
 
 #include "graphicsviewer.h"
 
@@ -393,6 +394,52 @@ void GraphicsViewer::showMap(int image_index)
 void GraphicsViewer::showQuasiSpaceMap(int quasi_space_index)
 {
     showMap(quasi_space_index + 1);
+}
+
+void GraphicsViewer::enterEvent(QEnterEvent *event)
+{
+    setFocus();
+    ImageViewer::enterEvent(event);
+}
+
+void GraphicsViewer::keyPressEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    if (isArrowKey(event))
+    {
+        handleArrowKeyPress(event);
+    }
+    else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+    {
+        emit mousePressed(cursor_position_x, cursor_position_y);
+    }
+    else
+    {
+        ImageViewer::keyPressEvent(event);
+    }
+}
+
+void GraphicsViewer::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    if (isArrowKey(event))
+    {
+        handleArrowKeyRelease(event);
+    }
+}
+
+void GraphicsViewer::leaveEvent(QEvent *event)
+{
+    clearFocus();
+    QWidget::leaveEvent(event);
 }
 
 void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
@@ -464,11 +511,100 @@ int GraphicsViewer::calculatePixelCoordinate(int grid_index)
     return pixel_coordinate;
 }
 
+void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        is_key_up_pressed = true;
+        if (frames_arrow_key_held == 0)
+        {
+            cursor_position_y -= 1;
+        }
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        is_key_down_pressed = true;
+        if (frames_arrow_key_held == 0)
+        {
+            cursor_position_y += 1;
+        }
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        is_key_left_pressed = true;
+        if (frames_arrow_key_held == 0)
+        {
+            cursor_position_x -= 1;
+        }
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        is_key_right_pressed = true;
+        if (frames_arrow_key_held == 0)
+        {
+            cursor_position_x += 1;
+        }
+    }
+
+    setRealCursorPosition(cursor_position_x, cursor_position_y);
+
+    timer->start();
+}
+
+void GraphicsViewer::handleArrowKeyRelease(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        is_key_up_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        is_key_down_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        is_key_left_pressed = false;
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        is_key_right_pressed = false;
+    }
+
+    if (!is_key_up_pressed && !is_key_down_pressed && !is_key_left_pressed && !is_key_right_pressed)
+    {
+        resetCursorMovement();
+    }
+}
+
+bool GraphicsViewer::isArrowKey(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Up)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Down)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Left)
+    {
+        return true;
+    }
+    else if (event->key() == Qt::Key_Right)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 void GraphicsViewer::loadAssets()
 {
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
     loadCursor();
+
+    loadTimer();
 }
 
 void GraphicsViewer::loadCursor()
@@ -494,6 +630,56 @@ void GraphicsViewer::loadQuasiSpaceMaps()
     }
 }
 
+void GraphicsViewer::loadTimer()
+{
+    timer = new QTimer();
+    resetCursorMovement();
+    connect(timer, &QTimer::timeout, this, &GraphicsViewer::onTimer);
+}
+
+void GraphicsViewer::onTimer()
+{
+    if (frames_arrow_key_held < 36)
+    {
+        frames_arrow_key_held += 1;
+    }
+
+    if (frames_arrow_key_held % frames_arrow_key_held_to_wait == 0)
+    {
+        cursor_position_x += arrow_key_increment * (is_key_right_pressed - is_key_left_pressed);
+        cursor_position_y += arrow_key_increment * (is_key_down_pressed - is_key_up_pressed);
+        setCosmeticCursorPosition(cursor_position_x, cursor_position_y);
+        setRealCursorPosition(cursor_position_x, cursor_position_y);
+
+        if (arrow_key_moves_at_current_speed < 3)
+        {
+            arrow_key_moves_at_current_speed += 1;
+        }
+        else
+        {
+            if (frames_arrow_key_held_to_wait > 1)
+            {
+                frames_arrow_key_held_to_wait -= 1;
+            }
+            else
+            {
+                arrow_key_increment = 2;
+            }
+            arrow_key_moves_at_current_speed = 0;
+        }
+    }
+}
+
+void GraphicsViewer::resetCursorMovement()
+{
+    timer->stop();
+    timer->setInterval(33);
+    frames_arrow_key_held = 0;
+    frames_arrow_key_held_to_wait = 4;
+    arrow_key_moves_at_current_speed = 0;
+    arrow_key_increment = 1;
+}
+
 void GraphicsViewer::setAllMapsInvisible()
 {
     for (int index{0}; index < number_quasi_space_maps + 1; index++)
@@ -515,6 +701,20 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_index_x, int grid_index_
     images.back().instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale_factor));
 
     update();
+}
+
+void GraphicsViewer::setRealCursorPosition(int grid_index_x, int grid_index_y)
+{
+    if (this->hasFocus())
+    {
+        boundGridIndexX(grid_index_x);
+        boundGridIndexY(grid_index_y);
+        cursor_position_x = grid_index_x;
+        cursor_position_y = grid_index_y;
+        QPoint scene_position(calculatePixelCoordinate(cursor_position_x), calculatePixelCoordinate(cursor_position_y));
+        QPoint global_position = mapToGlobal(scene_position);
+        QCursor::setPos(global_position);
+    }
 }
 
 void GraphicsViewer::updateScaleFactor()
