@@ -142,10 +142,10 @@ private:
 
     int scale_factor{1};
 
-    int arrow_key_moves_at_current_speed;
-    int arrow_key_increment;
-    int frames_arrow_key_held;
-    int frames_arrow_key_held_to_wait;
+    int move_delay_length;
+    int move_delay_fuse;
+    int move_delay_fuse_start_length{16};
+    int move_speed;
     QTimer* timer;
 
 

@@ -516,34 +516,22 @@ void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
     if (event->key() == Qt::Key_Up)
     {
         is_key_up_pressed = true;
-        if (frames_arrow_key_held == 0)
-        {
-            cursor_position_y -= 1;
-        }
+        cursor_position_y -= 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
     else if (event->key() == Qt::Key_Down)
     {
         is_key_down_pressed = true;
-        if (frames_arrow_key_held == 0)
-        {
-            cursor_position_y += 1;
-        }
+        cursor_position_y += 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
     else if (event->key() == Qt::Key_Left)
     {
         is_key_left_pressed = true;
-        if (frames_arrow_key_held == 0)
-        {
-            cursor_position_x -= 1;
-        }
+        cursor_position_x -= 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
     else if (event->key() == Qt::Key_Right)
     {
         is_key_right_pressed = true;
-        if (frames_arrow_key_held == 0)
-        {
-            cursor_position_x += 1;
-        }
+        cursor_position_x += 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
 
     setRealCursorPosition(cursor_position_x, cursor_position_y);
@@ -639,45 +627,38 @@ void GraphicsViewer::loadTimer()
 
 void GraphicsViewer::onTimer()
 {
-    if (frames_arrow_key_held < 36)
-    {
-        frames_arrow_key_held += 1;
-    }
+    move_delay_fuse -= 1;
 
-    if (frames_arrow_key_held % frames_arrow_key_held_to_wait == 0)
+    if (move_delay_length == 0 || move_delay_fuse % move_delay_length == 0)
     {
-        cursor_position_x += arrow_key_increment * (is_key_right_pressed - is_key_left_pressed);
-        cursor_position_y += arrow_key_increment * (is_key_down_pressed - is_key_up_pressed);
+        cursor_position_x += move_speed * (is_key_right_pressed - is_key_left_pressed);
+        cursor_position_y += move_speed * (is_key_down_pressed - is_key_up_pressed);
         setCosmeticCursorPosition(cursor_position_x, cursor_position_y);
         setRealCursorPosition(cursor_position_x, cursor_position_y);
+    }
 
-        if (arrow_key_moves_at_current_speed < 3)
-        {
-            arrow_key_moves_at_current_speed += 1;
-        }
-        else
-        {
-            if (frames_arrow_key_held_to_wait > 1)
-            {
-                frames_arrow_key_held_to_wait -= 1;
-            }
-            else
-            {
-                arrow_key_increment = 2;
-            }
-            arrow_key_moves_at_current_speed = 0;
-        }
+    if (move_delay_fuse == 0)
+    {
+        move_delay_length -= 1;
+        move_delay_fuse = move_delay_length * 4;
+    }
+    else if (move_delay_fuse == -8)
+    {
+        move_speed = 2;
+    }
+    else if (move_delay_fuse == -16)
+    {
+        move_speed = 3;
     }
 }
 
 void GraphicsViewer::resetCursorMovement()
 {
     timer->stop();
-    timer->setInterval(33);
-    frames_arrow_key_held = 0;
-    frames_arrow_key_held_to_wait = 4;
-    arrow_key_moves_at_current_speed = 0;
-    arrow_key_increment = 1;
+    timer->setInterval(34);
+    move_delay_length = 4;
+    move_delay_fuse = move_delay_fuse_start_length;
+    move_speed = 1;
 }
 
 void GraphicsViewer::setAllMapsInvisible()
