@@ -35,25 +35,25 @@ void PathPlanner::determineBestPath()
     if (fuel_no_portal == fuel_with_portal && fuel_no_portal == fuel_with_portal_no_spawner)
     {
         emit requestUpdateMap(shortest_index);
-        QString message = "\nTake any route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel"
+        QString message = "Take any route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel"
             + "\nNatural portal located at (43.8, 637.2), open from 17th through 19th";
         emit requestPrint(message);
     }
     else if (best_choice == 0)
     {
-        QString message = "\nTake the direct route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel";
+        QString message = "Take the direct route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel";
         emit requestPrint(message);
     }
     else if (best_choice == 1)
     {
         emit requestUpdateMap(shortest_index);
-        QString message = "\nTake the portal route for " + QString::number(fuel_with_portal, 'f', 1) + " units fuel";
+        QString message = "Take the portal route for " + QString::number(fuel_with_portal, 'f', 1) + " units fuel";
         emit requestPrint(message);
     }
     else if (best_choice == 2)
     {
         emit requestUpdateMap(shortest_index);
-        QString message = "\nIf permissible, take the natural portal for " + QString::number(fuel_with_portal_no_spawner, 'f', 1) + " units fuel"
+        QString message = "If permissible, take the natural portal for " + QString::number(fuel_with_portal_no_spawner, 'f', 1) + " units fuel"
             + "\nOtherwise, take the portal route for " + QString::number(fuel_with_portal, 'f', 1) + " units fuel"
             + "\nNatural portal located at (43.8, 637.2), open from 17th through 19th";
         emit requestPrint(message);
@@ -68,7 +68,7 @@ void PathPlanner::queueMousePressCoordinates(int grid_index_x, int grid_index_y)
         origin_y_grid = grid_index_y;
         ppf::calculateGameUnitsFromGridIndicesX(origin_x_grid, origin_x_game);
         ppf::calculateGameUnitsFromGridIndicesY(origin_y_grid, origin_y_game);
-        QString message = QString::number(origin_x_game, 'f', 1) + ", " + QString::number(origin_y_game, 'f', 1) + "\nDestination: ";
+        QString message = QString::number(origin_x_game, 'f', 1) + ", " + QString::number(origin_y_game, 'f', 1) + "\n\nDestination:";
         emit requestPrint(message);
         number_queued_coordinates = 1;
     }
@@ -87,7 +87,7 @@ void PathPlanner::queueMousePressCoordinates(int grid_index_x, int grid_index_y)
     else
     {
         emit requestResetMap();
-        emit requestPrint("Origin:      ");
+        emit requestPrint("Origin:");
         number_queued_coordinates = 0;
     }
 }

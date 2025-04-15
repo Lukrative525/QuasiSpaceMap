@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(path_planner, &PathPlanner::requestUpdateMap, this, &MainWindow::updateMap);
     connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
 
-    print("Origin:      ");
+    print("Origin:");
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +92,6 @@ QString MainWindow::formatCoordinates(QPointF coordinates)
 
 void MainWindow::print(QString message)
 {
-    ui->plain_text_edit->insertPlainText(message);
+    ui->plain_text_edit->appendPlainText(message);
 }
 

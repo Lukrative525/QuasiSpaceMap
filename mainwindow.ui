@@ -98,6 +98,9 @@ color: rgb(255, 255, 255);</string>
       <property name="frameShape">
        <enum>QFrame::Shape::NoFrame</enum>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
       <property name="cursorWidth">
        <number>0</number>
       </property>
