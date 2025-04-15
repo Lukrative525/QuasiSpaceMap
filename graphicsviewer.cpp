@@ -627,7 +627,10 @@ void GraphicsViewer::loadTimer()
 
 void GraphicsViewer::onTimer()
 {
-    move_delay_fuse -= 1;
+    if (move_delay_fuse > -4)
+    {
+        move_delay_fuse -= 1;
+    }
 
     if (move_delay_length == 0 || move_delay_fuse % move_delay_length == 0)
     {
