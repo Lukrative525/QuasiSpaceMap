@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(QuasiSpaceMap LANGUAGES CXX VERSION 0.1.0)
 
-FIND_PACKAGE(Qt6 REQUIRED COMPONENTS GUI OpenGLWidgets)
+FIND_PACKAGE(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -13,20 +13,30 @@ SET(CMAKE_AUTORCC ON)
 add_library(QuasiSpaceMapLibrary STATIC)
 target_sources(QuasiSpaceMapLibrary
     PRIVATE
+        image.cpp
+        imageinstance.cpp
+        imageviewer.cpp
         pathplanner.cpp
         pathplannerfunctions.cpp
+        starchart.cpp
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS ${PROJECT_SOURCE_DIR}
         FILES
+            image.h
+            imageinstance.h
+            imageviewer.h
             pathplanner.h
             pathplannerfunctions.h
+            starchart.h
 )
 target_compile_features(QuasiSpaceMapLibrary PUBLIC cxx_std_17)
 target_include_directories(QuasiSpaceMapLibrary PRIVATE)
 target_link_libraries(QuasiSpaceMapLibrary
     PRIVATE
         Qt6::Core
+        Qt6::Gui
+        Qt6::OpenGLWidgets
 )
 
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.rc")
@@ -35,12 +45,6 @@ set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.rc")
 add_executable(QuasiSpaceMap WIN32 ${APP_ICON_RESOURCE_WINDOWS})
 target_sources(QuasiSpaceMap
     PRIVATE
-        image.cpp
-        image.h
-        imageinstance.cpp
-        imageinstance.h
-        imageviewer.cpp
-        imageviewer.h
         graphicsviewer.cpp
         graphicsviewer.h
         main.cpp

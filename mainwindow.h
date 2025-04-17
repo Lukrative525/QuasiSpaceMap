@@ -22,7 +22,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void handleMousePressEvent(int grid_index_x, int grid_index_y);
+    void handleMousePressEvent(int grid_position_x, int grid_position_y);
     void handlePrintRequest(QString message);
     void resetMap();
     void updateMap(int index);
@@ -33,7 +33,6 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-    QString formatCoordinates(QPointF scene_position);
     void print(QString message);
 
     GraphicsViewer* graphics_viewer;

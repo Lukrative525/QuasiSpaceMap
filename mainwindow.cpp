@@ -27,9 +27,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::handleMousePressEvent(int grid_index_x, int grid_index_y)
+void MainWindow::handleMousePressEvent(int grid_position_x, int grid_position_y)
 {
-    path_planner->queueMousePressCoordinates(grid_index_x, grid_index_y);
+    path_planner->queueMousePressCoordinates(grid_position_x, grid_position_y);
 }
 
 void MainWindow::handlePrintRequest(QString message)
@@ -86,13 +86,6 @@ void MainWindow::showEvent(QShowEvent* event)
         original_size = size();
         original_position = pos();
     }
-}
-
-QString MainWindow::formatCoordinates(QPointF coordinates)
-{
-    QString formatted_coordinates = "(" + QString::number(coordinates.x()) + ", " + QString::number(coordinates.y()) + ")\n";
-
-    return formatted_coordinates;
 }
 
 void MainWindow::print(QString message)

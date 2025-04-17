@@ -9,11 +9,11 @@ class GraphicsViewer: public ImageViewer
 public:
     explicit GraphicsViewer(QWidget* parent = nullptr);
     void showHyperSpaceMap();
-    void showMap(int image_index);
+    void showMap(int map_index);
     void showQuasiSpaceMap(int quasi_space_index);
 
 signals:
-    void mousePressed(int grid_index_x, int grid_index_y);
+    void mousePressed(int grid_position_x, int grid_position_y);
 
 protected:
     void enterEvent(QEnterEvent* event) override;
@@ -25,8 +25,8 @@ protected:
     void resizeGL(int new_width, int new_height) override;
 
 private:
-    void boundGridIndexX(int& grid_index_x);
-    void boundGridIndexY(int& grid_index_y);
+    void boundGridIndexX(int& grid_position_x);
+    void boundGridIndexY(int& grid_position_y);
     int calculateGridIndex(int pixel_coordinate);
     int calculatePixelCoordinate(int grid_index);
     void handleArrowKeyPress(QKeyEvent* event);
@@ -40,8 +40,8 @@ private:
     void onTimer();
     void resetCursorMovement();
     void setAllMapsInvisible();
-    void setCosmeticCursorPosition(int grid_index_x, int grid_index_y);
-    void setRealCursorPosition(int grid_index_x, int grid_index_y);
+    void setCosmeticCursorPosition(int grid_position_x, int grid_position_y);
+    void setRealCursorPosition(int grid_position_x, int grid_position_y);
     void updateScaleFactor();
 
     bool is_key_left_pressed{false};
@@ -50,8 +50,8 @@ private:
     bool is_key_down_pressed{false};
 
     const static int cursor_center_offset{4};
-    int cursor_position_x{0};
-    int cursor_position_y{0};
+    int cursor_grid_position_x{0};
+    int cursor_grid_position_y{0};
     const static int bottom_grid_bound{236};
     const static int left_grid_bound{7};
     const static int right_grid_bound{248};
@@ -68,9 +68,12 @@ private:
     int move_delay_fuse_start_length;
     int move_delay_fuse;
     int move_speed;
-    QTimer* timer;
 
+    QTimer* move_delay_timer;
 
+    int cursor_index;
+    int hyper_space_index;
+    int quasi_space_start_index;
 };
 
 #endif // GRAPHICSVIEWER_H
