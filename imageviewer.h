@@ -31,7 +31,7 @@ private:
     void initializeShaderProgram();
     void initializeTexture(Image& image);
     QString readShaderSource(const QString& file_path);
-    void updateInstanceBuffer(Image& image);
+    void updateInstanceBuffer(const Image& image);
     void verifyProgramLinking(const uint& shader_to_verify);
     void verifyShaderCompilation(const uint& shader_to_verify);
 

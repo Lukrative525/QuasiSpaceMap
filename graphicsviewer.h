@@ -2,6 +2,7 @@
 #define GRAPHICSVIEWER_H
 
 #include "imageviewer.h"
+// #include "starchart.h"
 
 class GraphicsViewer: public ImageViewer
 {

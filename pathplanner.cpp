@@ -66,8 +66,8 @@ void PathPlanner::queueMousePressCoordinates(int grid_index_x, int grid_index_y)
     {
         origin_x_grid = grid_index_x;
         origin_y_grid = grid_index_y;
-        ppf::calculateGameUnitsFromGridIndicesX(origin_x_grid, origin_x_game);
-        ppf::calculateGameUnitsFromGridIndicesY(origin_y_grid, origin_y_game);
+        origin_x_game = ppf::calculateGameUnitsFromGridIndicesX(origin_x_grid);
+        origin_y_game = ppf::calculateGameUnitsFromGridIndicesY(origin_y_grid);
         QString message = QString::number(origin_x_game, 'f', 1) + ", " + QString::number(origin_y_game, 'f', 1) + "\n\nDestination:";
         emit requestPrint(message);
         number_queued_coordinates = 1;
@@ -76,8 +76,8 @@ void PathPlanner::queueMousePressCoordinates(int grid_index_x, int grid_index_y)
     {
         destination_x_grid = grid_index_x;
         destination_y_grid = grid_index_y;
-        ppf::calculateGameUnitsFromGridIndicesX(destination_x_grid, destination_x_game);
-        ppf::calculateGameUnitsFromGridIndicesY(destination_y_grid, destination_y_game);
+        destination_x_game = ppf::calculateGameUnitsFromGridIndicesX(destination_x_grid);
+        destination_y_game = ppf::calculateGameUnitsFromGridIndicesY(destination_y_grid);
         QString message = QString::number(destination_x_game, 'f', 1) + ", " + QString::number(destination_y_game, 'f', 1) + "\n";
         emit requestPrint(message);
         number_queued_coordinates = 2;

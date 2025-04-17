@@ -230,7 +230,7 @@ QString ImageViewer::readShaderSource(const QString& file_path)
     return data;
 }
 
-void ImageViewer::updateInstanceBuffer(Image& image)
+void ImageViewer::updateInstanceBuffer(const Image& image)
 {
     std::vector<InstanceData> instance_data;
     instance_data.reserve(image.instances.size());
