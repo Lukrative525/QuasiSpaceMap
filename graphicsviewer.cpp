@@ -1,6 +1,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 
+#include "coordinate.h"
 #include "graphicsviewer.h"
 
 GraphicsViewer::GraphicsViewer(QWidget *parent):
@@ -82,10 +83,13 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
 {
     QPoint mouse_position = event->pos();
 
-    int grid_index_x = calculateGridIndex(mouse_position.x());
-    int grid_index_y = calculateGridIndex(mouse_position.y());
+    int grid_position_x = calculateGridIndex(mouse_position.x());
+    int grid_position_y = calculateGridIndex(mouse_position.y());
 
-    setCosmeticCursorPosition(grid_index_x, grid_index_y);
+    if (grid_position_x != cursor_grid_position_x || grid_position_y != cursor_grid_position_y)
+    {
+        setCosmeticCursorPosition(grid_position_x, grid_position_y);
+    }
 }
 
 void GraphicsViewer::mousePressEvent(QMouseEvent* event)
@@ -94,8 +98,8 @@ void GraphicsViewer::mousePressEvent(QMouseEvent* event)
 
     int grid_index_x = calculateGridIndex(mouse_position.x());
     int grid_index_y = calculateGridIndex(mouse_position.y());
-    boundGridIndexX(grid_index_x);
-    boundGridIndexY(grid_index_y);
+    boundGridPositionX(grid_index_x);
+    boundGridPositionY(grid_index_y);
 
     emit mousePressed(grid_index_x, grid_index_y);
 }
@@ -109,7 +113,7 @@ void GraphicsViewer::resizeGL(int new_width, int new_height)
     updateScaleFactor();
 }
 
-void GraphicsViewer::boundGridIndexX(int& grid_position_x)
+void GraphicsViewer::boundGridPositionX(int& grid_position_x)
 {
     if (grid_position_x < left_grid_bound)
     {
@@ -121,7 +125,7 @@ void GraphicsViewer::boundGridIndexX(int& grid_position_x)
     }
 }
 
-void GraphicsViewer::boundGridIndexY(int& grid_position_y)
+void GraphicsViewer::boundGridPositionY(int& grid_position_y)
 {
     if (grid_position_y < top_grid_bound)
     {
@@ -170,6 +174,7 @@ void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
         cursor_grid_position_x += 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
 
+    setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
     setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
 
     move_delay_timer->start();
@@ -227,6 +232,7 @@ void GraphicsViewer::loadAssets()
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
     loadCursor();
+    addToQueuedActions([this]() {addImage(":/images/pixel.png");});
 
     loadTimer();
 }
@@ -312,8 +318,18 @@ void GraphicsViewer::setAllMapsInvisible()
 
 void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_position_y)
 {
-    boundGridIndexX(grid_position_x);
-    boundGridIndexY(grid_position_y);
+    boundGridPositionX(grid_position_x);
+    boundGridPositionY(grid_position_y);
+
+    if (images[hyper_space_index].instances[0].is_active())
+    {
+        QString star_system_name = starchart.getStarSystemName(Coordinate(grid_position_x, grid_position_y));
+        if (!star_system_name.isEmpty())
+        {
+            qDebug() << star_system_name;
+        }
+    }
+
     cursor_grid_position_x = grid_position_x;
     cursor_grid_position_y = grid_position_y;
     int pixel_coordinate_x = calculatePixelCoordinate(grid_position_x);
@@ -329,8 +345,8 @@ void GraphicsViewer::setRealCursorPosition(int grid_position_x, int grid_positio
 {
     if (this->hasFocus())
     {
-        boundGridIndexX(grid_position_x);
-        boundGridIndexY(grid_position_y);
+        boundGridPositionX(grid_position_x);
+        boundGridPositionY(grid_position_y);
         cursor_grid_position_x = grid_position_x;
         cursor_grid_position_y = grid_position_y;
         QPoint scene_position(calculatePixelCoordinate(cursor_grid_position_x), calculatePixelCoordinate(cursor_grid_position_y));
@@ -352,7 +368,7 @@ void GraphicsViewer::updateScaleFactor()
     {
         scale_factor = new_scale_factor;
 
-        for (Image& image : images)
+        for (Image& image: images)
         {
             for (ImageInstance& instance : image.instances)
             {

@@ -13,22 +13,30 @@ SET(CMAKE_AUTORCC ON)
 add_library(QuasiSpaceMapLibrary STATIC)
 target_sources(QuasiSpaceMapLibrary
     PRIVATE
+        coordinate.cpp
+        coordinatehash.cpp
         image.cpp
         imageinstance.cpp
         imageviewer.cpp
         pathplanner.cpp
         pathplannerfunctions.cpp
         starchart.cpp
+        starchartdata.cpp
+        starsystem.cpp
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS ${PROJECT_SOURCE_DIR}
         FILES
+            coordinate.h
+            coordinatehash.h
             image.h
             imageinstance.h
             imageviewer.h
             pathplanner.h
             pathplannerfunctions.h
             starchart.h
+            starchartdata.h
+            starsystem.h
 )
 target_compile_features(QuasiSpaceMapLibrary PUBLIC cxx_std_17)
 target_include_directories(QuasiSpaceMapLibrary PRIVATE)

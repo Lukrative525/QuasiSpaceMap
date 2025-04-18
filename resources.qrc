@@ -20,5 +20,6 @@
         <file>shaders/fragment_shader.frag</file>
         <file>shaders/vertex_shader.vert</file>
         <file>fonts/digital-7 (mono).ttf</file>
+        <file>images/pixel.png</file>
     </qresource>
 </RCC>

@@ -2,7 +2,7 @@
 #define GRAPHICSVIEWER_H
 
 #include "imageviewer.h"
-// #include "starchart.h"
+#include "starchart.h"
 
 class GraphicsViewer: public ImageViewer
 {
@@ -26,8 +26,8 @@ protected:
     void resizeGL(int new_width, int new_height) override;
 
 private:
-    void boundGridIndexX(int& grid_position_x);
-    void boundGridIndexY(int& grid_position_y);
+    void boundGridPositionX(int& grid_position_x);
+    void boundGridPositionY(int& grid_position_y);
     int calculateGridIndex(int pixel_coordinate);
     int calculatePixelCoordinate(int grid_index);
     void handleArrowKeyPress(QKeyEvent* event);
@@ -75,6 +75,8 @@ private:
     int cursor_index;
     int hyper_space_index;
     int quasi_space_start_index;
+
+    StarChart starchart{};
 };
 
 #endif // GRAPHICSVIEWER_H

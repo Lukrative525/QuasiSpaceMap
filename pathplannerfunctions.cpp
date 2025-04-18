@@ -13,7 +13,7 @@ namespace ppf
 
     float calculateGameUnitsFromGridIndicesY(int grid_index_y)
     {
-        float game_units_y = std::roundl((236.0 - grid_index_y) * 995.6 / 226 + 2.1);
+        float game_units_y = (236.0 - grid_index_y) * 995.6 / 226 + 2.1;
 
         return game_units_y;
     }
