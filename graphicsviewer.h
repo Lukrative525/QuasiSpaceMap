@@ -3,12 +3,14 @@
 
 #include "imageviewer.h"
 #include "starchart.h"
+#include "textmanager.h"
 
 class GraphicsViewer: public ImageViewer
 {
     Q_OBJECT
 public:
     explicit GraphicsViewer(QWidget* parent = nullptr);
+    Image* getPurplePixelImage();
     void showHyperSpaceMap();
     void showMap(int map_index);
     void showQuasiSpaceMap(int quasi_space_index);
@@ -36,6 +38,7 @@ private:
     void loadAssets();
     void loadCursor();
     void loadHyperSpaceMap();
+    void loadPurplePixel();
     void loadQuasiSpaceMaps();
     void loadTimer();
     void onTimer();
@@ -43,7 +46,7 @@ private:
     void setAllMapsInvisible();
     void setCosmeticCursorPosition(int grid_position_x, int grid_position_y);
     void setRealCursorPosition(int grid_position_x, int grid_position_y);
-    void updateScaleFactor();
+    void updateScale();
 
     bool is_key_left_pressed{false};
     bool is_key_right_pressed{false};
@@ -63,7 +66,7 @@ private:
     int height;
     int width;
 
-    int scale_factor{1};
+    int scale{1};
 
     int move_delay_length;
     int move_delay_fuse_start_length;
@@ -73,10 +76,13 @@ private:
     QTimer* move_delay_timer;
 
     int cursor_index;
+    int purple_pixel_index;
     int hyper_space_index;
     int quasi_space_start_index;
 
-    StarChart starchart{};
+    StarChart star_chart{};
+
+    TextManager text_manager;
 };
 
 #endif // GRAPHICSVIEWER_H

@@ -14,9 +14,10 @@ class ImageViewer: public QOpenGLWidget, protected QOpenGLExtraFunctions
     Q_OBJECT
 public:
     explicit ImageViewer(QWidget* parent = nullptr);
+    void addImage(const QString& file_path);
+    void addImage(const QString& file_path, int reserved_images);
 
 protected:
-    void addImage(const QString& file_path);
     void addToQueuedActions(std::function<void()> action);
     void initializeGL() override;
     void paintGL() override;

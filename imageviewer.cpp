@@ -17,17 +17,19 @@ ImageViewer::ImageViewer(QWidget *parent):
 
 void ImageViewer::addImage(const QString& file_path)
 {
-    if (context() && context()->isValid())
-    {
-        images.emplace_back(file_path);
-        Image& image = images.back();
+    addImage(file_path, 1);
+}
 
-        initializeTexture(image);
-        initializeImageGeometry(image);
-        updateInstanceBuffer(image);
+void ImageViewer::addImage(const QString& file_path, int reserved_images)
+{
+    int image_index = images.size();
+    images.emplace_back(file_path, reserved_images);
 
-        updateGeometry();
-    }
+    addToQueuedActions([this, image_index]() {initializeTexture(images[image_index]);});
+    addToQueuedActions([this, image_index]() {initializeImageGeometry(images[image_index]);});
+    addToQueuedActions([this, image_index]() {updateInstanceBuffer(images[image_index]);});
+
+    addToQueuedActions([this]() {updateGeometry();});
 }
 
 void ImageViewer::addToQueuedActions(std::function<void()> action)

@@ -60,6 +60,8 @@ target_sources(QuasiSpaceMap
         mainwindow.h
         mainwindow.ui
         resources.qrc
+        textmanager.cpp
+        textmanager.h
 )
 
 target_compile_features(QuasiSpaceMap PUBLIC cxx_std_17)

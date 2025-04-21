@@ -10,7 +10,8 @@
 class Image
 {
 public:
-    Image(QString file_path);
+    Image(const QString& file_path);
+    Image(const QString& file_path, int reserved_instances);
     void addInstance();
 
     QString file_path;

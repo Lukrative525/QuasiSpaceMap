@@ -11,8 +11,15 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
     setMouseTracking(true);
 
     loadAssets();
+    text_manager.setPixelImage(getPurplePixelImage());
 
     setAttribute(Qt::WA_NativeWindow);
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+}
+
+Image* GraphicsViewer::getPurplePixelImage()
+{
+    return &images[purple_pixel_index];
 }
 
 void GraphicsViewer::showHyperSpaceMap()
@@ -71,6 +78,10 @@ void GraphicsViewer::keyReleaseEvent(QKeyEvent* event)
     {
         handleArrowKeyRelease(event);
     }
+    else
+    {
+        ImageViewer::keyReleaseEvent(event);
+    }
 }
 
 void GraphicsViewer::leaveEvent(QEvent *event)
@@ -85,6 +96,8 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
 
     int grid_position_x = calculateGridIndex(mouse_position.x());
     int grid_position_y = calculateGridIndex(mouse_position.y());
+    boundGridPositionX(grid_position_x);
+    boundGridPositionY(grid_position_y);
 
     if (grid_position_x != cursor_grid_position_x || grid_position_y != cursor_grid_position_y)
     {
@@ -96,12 +109,12 @@ void GraphicsViewer::mousePressEvent(QMouseEvent* event)
 {
     QPoint mouse_position = event->pos();
 
-    int grid_index_x = calculateGridIndex(mouse_position.x());
-    int grid_index_y = calculateGridIndex(mouse_position.y());
-    boundGridPositionX(grid_index_x);
-    boundGridPositionY(grid_index_y);
+    int grid_position_x = calculateGridIndex(mouse_position.x());
+    int grid_position_y = calculateGridIndex(mouse_position.y());
+    boundGridPositionX(grid_position_x);
+    boundGridPositionY(grid_position_y);
 
-    emit mousePressed(grid_index_x, grid_index_y);
+    emit mousePressed(grid_position_x, grid_position_y);
 }
 
 void GraphicsViewer::resizeGL(int new_width, int new_height)
@@ -110,7 +123,7 @@ void GraphicsViewer::resizeGL(int new_width, int new_height)
 
     height = new_height;
     width = new_width;
-    updateScaleFactor();
+    updateScale();
 }
 
 void GraphicsViewer::boundGridPositionX(int& grid_position_x)
@@ -139,14 +152,14 @@ void GraphicsViewer::boundGridPositionY(int& grid_position_y)
 
 int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
 {
-    int grid_index = std::floor(pixel_coordinate / scale_factor);
+    int grid_position = std::floor(pixel_coordinate / scale);
 
-    return grid_index;
+    return grid_position;
 }
 
-int GraphicsViewer::calculatePixelCoordinate(int grid_index)
+int GraphicsViewer::calculatePixelCoordinate(int grid_position)
 {
-    int pixel_coordinate = grid_index * scale_factor;
+    int pixel_coordinate = grid_position * scale;
 
     return pixel_coordinate;
 }
@@ -231,27 +244,33 @@ void GraphicsViewer::loadAssets()
 {
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
+    loadPurplePixel();
     loadCursor();
-    addToQueuedActions([this]() {addImage(":/images/pixel.png");});
 
     loadTimer();
 }
 
 void GraphicsViewer::loadCursor()
 {
-    addToQueuedActions([this]() {cursor_index = images.size();});
-    addToQueuedActions([this]() {addImage(":/images/cursor.png");});
+    cursor_index = images.size();
+    addImage(":/images/cursor.png", 1);
 }
 
 void GraphicsViewer::loadHyperSpaceMap()
 {
-    addToQueuedActions([this]() {hyper_space_index = images.size();});
-    addToQueuedActions([this]() {addImage(":/images/in-game map.png");});
+    hyper_space_index = images.size();
+    addImage(":/images/in-game map.png", 1);
+}
+
+void GraphicsViewer::loadPurplePixel()
+{
+    purple_pixel_index = images.size();
+    addImage(":/images/purple pixel.png", 164);
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
 {
-    addToQueuedActions([this]() {quasi_space_start_index = images.size();});
+    quasi_space_start_index = images.size();
 
     QString file_name;
     file_name.reserve(64);
@@ -259,8 +278,8 @@ void GraphicsViewer::loadQuasiSpaceMaps()
     for (int i{0}; i < number_quasi_space_maps; i++)
     {
         file_name = ":/images/quasi " + QString::number(i) + ".png";
-        addToQueuedActions([this, file_name]() {addImage(file_name);});
-        addToQueuedActions([this]() {images.back().instances[0].setIsActive(false);});
+        addImage(file_name, 1);
+        images.back().instances[0].setIsActive(false);
     }
 }
 
@@ -323,7 +342,7 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_pos
 
     if (images[hyper_space_index].instances[0].is_active())
     {
-        QString star_system_name = starchart.getStarSystemName(Coordinate(grid_position_x, grid_position_y));
+        QString star_system_name = star_chart.getStarSystemName(Coordinate(grid_position_x, grid_position_y));
         if (!star_system_name.isEmpty())
         {
             qDebug() << star_system_name;
@@ -335,8 +354,8 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_pos
     int pixel_coordinate_x = calculatePixelCoordinate(grid_position_x);
     int pixel_coordinate_y = calculatePixelCoordinate(grid_position_y);
 
-    images[cursor_index].instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale_factor));
-    images[cursor_index].instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale_factor));
+    images[cursor_index].instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale));
+    images[cursor_index].instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale));
 
     update();
 }
@@ -355,29 +374,30 @@ void GraphicsViewer::setRealCursorPosition(int grid_position_x, int grid_positio
     }
 }
 
-void GraphicsViewer::updateScaleFactor()
+void GraphicsViewer::updateScale()
 {
     if (images.size() < 1)
     {
         return;
     }
 
-    int new_scale_factor = std::max(1, static_cast<int>(std::floor(height / images[hyper_space_index].instances[0].size_y_base())));
+    int new_scale = std::max(1, static_cast<int>(std::floor(height / images[hyper_space_index].instances[0].size_y_base())));
 
-    if (scale_factor != new_scale_factor)
+    if (scale != new_scale)
     {
-        scale_factor = new_scale_factor;
+        scale = new_scale;
 
         for (Image& image: images)
         {
             for (ImageInstance& instance : image.instances)
             {
-                instance.setScale(scale_factor);
+                instance.setScale(scale);
             }
         }
 
         setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
 
+        text_manager.update();
         updateGeometry();
     }
 }
