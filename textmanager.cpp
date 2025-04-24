@@ -33,7 +33,7 @@ void TextManager::placePixels()
     int scale = static_cast<int>(pixel_image->instances.front().scale());
     for (int i{0}; i < pixel_image->instances.size(); i++)
     {
-        pixel_image->instances[i].setY(scale * (digit_grid_position_y + i % digit_rows));
         pixel_image->instances[i].setX(scale * (digit_grid_positions_x[static_cast<int>(std::floor(i / (digit_columns * digit_rows)))] + i % digit_columns));
+        pixel_image->instances[i].setY(scale * (digit_grid_position_y + static_cast<int>(std::floor((i % (digit_columns * digit_rows)) / digit_columns))));
     }
 }
