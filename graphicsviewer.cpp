@@ -60,6 +60,7 @@ void GraphicsViewer::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
     {
         emit mousePressed(cursor_grid_position_x, cursor_grid_position_y);
+        qDebug() << cursor_grid_position_x << ", " << cursor_grid_position_y;
     }
     else
     {
@@ -340,14 +341,14 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_pos
     boundGridPositionX(grid_position_x);
     boundGridPositionY(grid_position_y);
 
-    if (images[hyper_space_index].instances[0].is_active())
-    {
-        const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
-        if (star_system != nullptr)
-        {
-            qDebug() << star_system->name();
-        }
-    }
+    // if (images[hyper_space_index].instances[0].is_active())
+    // {
+    //     const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
+    //     if (star_system != nullptr)
+    //     {
+    //         qDebug() << star_system->name();
+    //     }
+    // }
 
     cursor_grid_position_x = grid_position_x;
     cursor_grid_position_y = grid_position_y;

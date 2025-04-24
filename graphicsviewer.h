@@ -59,7 +59,8 @@ private:
     const static int bottom_grid_bound{236};
     const static int left_grid_bound{7};
     const static int right_grid_bound{248};
-    const static int top_grid_bound{10};
+    // const static int top_grid_bound{10};
+    const static int top_grid_bound{0};
 
     const static int number_quasi_space_maps{15};
 
