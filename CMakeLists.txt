@@ -21,7 +21,6 @@ target_sources(QuasiSpaceMapLibrary
         pathplanner.cpp
         pathplannerfunctions.cpp
         starchart.cpp
-        starchartdata.cpp
         starsystem.cpp
     PUBLIC
         FILE_SET HEADERS
@@ -62,6 +61,7 @@ target_sources(QuasiSpaceMap
         resources.qrc
         textmanager.cpp
         textmanager.h
+        textmanagerdata.h
 )
 
 target_compile_features(QuasiSpaceMap PUBLIC cxx_std_17)

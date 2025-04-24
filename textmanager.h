@@ -15,6 +15,7 @@ public:
 private:
     void initialize();
     void placePixels();
+    void drawDigit(int location, int digit);
 
     Image* pixel_image{nullptr};
 
@@ -23,7 +24,7 @@ private:
 
     const int digit_columns{4};
     const int digit_rows{5};
-    const int number_digit_pixels{160};
+    const int digit_pixels{160};
 };
 
 #endif // TEXTMANAGER_H

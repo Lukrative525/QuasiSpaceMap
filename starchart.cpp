@@ -3,7 +3,7 @@
 
 StarChart::StarChart()
 {
-    for (const StarInfo& info : getStarData()) {
+    for (const StarInfo& info : star_data) {
         stars.emplace(Coordinate{info.grid_x, info.grid_y}, StarSystem{info.name, info.pos_x, info.pos_y});
     }
 }
