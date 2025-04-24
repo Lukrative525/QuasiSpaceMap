@@ -11,9 +11,9 @@ class StarChart
 {
 public:
     StarChart();
-    QString getStarSystemName(Coordinate grid_position);
-    std::pair<float, float> getTrueSpaceCoordinates(Coordinate grid_position);
+    const StarSystem* getStarSystem(Coordinate grid_position);
 
+private:
     std::unordered_map<Coordinate, StarSystem, CoordinateHash> stars;
 };
 

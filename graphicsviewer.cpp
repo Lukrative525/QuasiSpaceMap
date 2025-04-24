@@ -342,10 +342,10 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_pos
 
     if (images[hyper_space_index].instances[0].is_active())
     {
-        QString star_system_name = star_chart.getStarSystemName(Coordinate(grid_position_x, grid_position_y));
-        if (!star_system_name.isEmpty())
+        const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
+        if (star_system != nullptr)
         {
-            qDebug() << star_system_name;
+            qDebug() << star_system->name();
         }
     }
 

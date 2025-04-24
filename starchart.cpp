@@ -8,21 +8,13 @@ StarChart::StarChart()
     }
 }
 
-QString StarChart::getStarSystemName(Coordinate grid_position)
+const StarSystem* StarChart::getStarSystem(Coordinate grid_position)
 {
-    if (stars.find(grid_position) != stars.end())
+    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::iterator iterator = stars.find(grid_position);
+    if (iterator != stars.end())
     {
-        StarSystem system = stars.at(grid_position);
-
-        return system.name();
+        return &(iterator->second);
     }
 
-    return QString{};
-}
-
-std::pair<float, float> StarChart::getTrueSpaceCoordinates(Coordinate grid_position)
-{
-    std::pair<float, float> true_space_coordinates{0, 0};
-
-    return true_space_coordinates;
+    return nullptr;
 }
