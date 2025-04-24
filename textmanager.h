@@ -15,7 +15,7 @@ private:
     void initialize();
     void updateStaticSymbols();
 
-    Image* pixel_image;
+    Image* pixel_image{nullptr};
 };
 
 #endif // TEXTMANAGER_H

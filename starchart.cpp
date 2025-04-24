@@ -10,7 +10,7 @@ StarChart::StarChart()
 
 const StarSystem* StarChart::getStarSystem(Coordinate grid_position)
 {
-    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::iterator iterator = stars.find(grid_position);
+    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::const_iterator iterator = stars.find(grid_position);
     if (iterator != stars.end())
     {
         return &(iterator->second);

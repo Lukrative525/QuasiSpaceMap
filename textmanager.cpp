@@ -1,9 +1,6 @@
 #include "textmanager.h"
 
-TextManager::TextManager():
-    pixel_image{nullptr}
-{
-}
+TextManager::TextManager() {}
 
 TextManager::TextManager(Image* pixel_image):
     pixel_image{pixel_image}
