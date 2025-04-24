@@ -5,17 +5,27 @@
 
 #include "image.h"
 
+struct Digits
+{
+    int hundreds;
+    int tens;
+    int ones;
+    int tenths;
+};
+
 class TextManager
 {
 public:
     explicit TextManager();
     void setPixelImage(Image* new_pixel_image);
-    void update();
+    void refreshScale();
+    void updateCoordinates(float x, float y);
 
 private:
+    void drawDigit(int location, int digit);
+    Digits extractDigits(float value);
     void initialize();
     void placePixels();
-    void drawDigit(int location, int digit);
 
     Image* pixel_image{nullptr};
 

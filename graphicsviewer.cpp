@@ -345,7 +345,7 @@ void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_pos
         const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
         if (star_system != nullptr)
         {
-            qDebug() << star_system->name();
+            text_manager.updateCoordinates(star_system->true_space_position_x(), star_system->true_space_position_y());
         }
     }
 
@@ -397,7 +397,7 @@ void GraphicsViewer::updateScale()
 
         setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
 
-        text_manager.update();
+        text_manager.refreshScale();
         updateGeometry();
     }
 }

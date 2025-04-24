@@ -12,17 +12,45 @@ void TextManager::setPixelImage(Image* new_pixel_image)
     initialize();
 }
 
-void TextManager::update()
+void TextManager::refreshScale()
 {
     placePixels();
-    drawDigit(0, 0);
-    drawDigit(1, 1);
-    drawDigit(2, 2);
-    drawDigit(3, 3);
-    drawDigit(4, 4);
-    drawDigit(5, 5);
-    drawDigit(6, 8);
-    drawDigit(7, 9);
+}
+
+void TextManager::updateCoordinates(float x, float y)
+{
+    Digits x_digits = extractDigits(x);
+    Digits y_digits = extractDigits(y);
+    drawDigit(0, x_digits.hundreds);
+    drawDigit(1, x_digits.tens);
+    drawDigit(2, x_digits.ones);
+    drawDigit(3, x_digits.tenths);
+    drawDigit(4, y_digits.hundreds);
+    drawDigit(5, y_digits.tens);
+    drawDigit(6, y_digits.ones);
+    drawDigit(7, y_digits.tenths);
+}
+
+void TextManager::drawDigit(int location, int digit)
+{
+    int pixel_start_index{location * digit_columns * digit_rows};
+    int pixel_end_index{pixel_start_index + digit_columns * digit_rows};
+    for (int i{pixel_start_index}; i < pixel_end_index; i++)
+    {
+        pixel_image->instances[i].setIsActive(digits[digit][i - pixel_start_index]);
+    }
+}
+
+Digits TextManager::extractDigits(float value)
+{
+    int value_as_int = static_cast<int>(value);
+    int hundreds = (value_as_int / 100) % 10;
+    int tens     = (value_as_int / 10) % 10;
+    int ones     = value_as_int % 10;
+
+    int tenths = static_cast<int>(value * 10) % 10;
+
+    return {hundreds, tens, ones, tenths};
 }
 
 void TextManager::initialize()
@@ -44,12 +72,4 @@ void TextManager::placePixels()
     }
 }
 
-void TextManager::drawDigit(int location, int digit)
-{
-    int pixel_start_index{location * digit_columns * digit_rows};
-    int pixel_end_index{pixel_start_index + digit_columns * digit_rows};
-    for (int i{pixel_start_index}; i < pixel_end_index; i++)
-    {
-        pixel_image->instances[i].setIsActive(digits[digit][i - pixel_start_index]);
-    }
-}
+
