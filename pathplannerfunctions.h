@@ -5,12 +5,10 @@
 
 namespace ppf
 {
-float calculateGameUnitsFromGridIndicesX(int grid_index_x);
-float calculateGameUnitsFromGridIndicesY(int grid_index_y);
-std::vector<float> calculateDifferenceBetween(float value, const std::vector<float>& vector);
-float calculateHypotenuse(float value_1, float value_2);
-std::vector<float> calculateHypotenuses(const std::vector<float>& vector_1, const std::vector<float>& vector_2);
-int argmin(const std::vector<float>& vector);
+std::vector<int> calculateDifferenceBetween(int value, const std::vector<int>& vector);
+int calculateHypotenuse(int value_1, int value_2);
+std::vector<int> calculateHypotenuses(const std::vector<int>& vector_1, const std::vector<int>& vector_2);
+int argmin(const std::vector<int>& vector);
 }
 
 #endif // PATHPLANNERFUNCTIONS_H

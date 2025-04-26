@@ -14,14 +14,10 @@ public:
     void queueMousePressCoordinates(int grid_index_x, int grid_index_y);
     const static int number_quasi_space_maps{15};
     int number_queued_coordinates{0};
-    int origin_x_grid;
-    int origin_y_grid;
-    int destination_x_grid;
-    int destination_y_grid;
-    float origin_x_game;
-    float origin_y_game;
-    float destination_x_game;
-    float destination_y_game;
+    int origin_true_space_position_x;
+    int origin_true_space_position_y;
+    int destination_true_space_position_x;
+    int destination_true_space_position_y;
 
 signals:
     void requestPrint(QString message);
@@ -29,10 +25,10 @@ signals:
     void requestUpdateMap(int portal_index);
 
 private:
-    std::vector<float> portal_output_x;
-    std::vector<float> portal_output_y;
-    std::vector<float> portal_coodinates_x;
-    std::vector<float> portal_coodinates_y;
+    std::vector<int> portal_output_x;
+    std::vector<int> portal_output_y;
+    std::vector<int> portal_coodinates_x;
+    std::vector<int> portal_coodinates_y;
 };
 
 #endif // PATHPLANNER_H

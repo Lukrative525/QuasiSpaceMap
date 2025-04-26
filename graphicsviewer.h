@@ -16,7 +16,7 @@ public:
     void showQuasiSpaceMap(int quasi_space_index);
 
 signals:
-    void mousePressed(int grid_position_x, int grid_position_y);
+    void mousePressed(int true_space_position_x, int true_space_position_y);
 
 protected:
     void enterEvent(QEnterEvent* event) override;
@@ -28,8 +28,8 @@ protected:
     void resizeGL(int new_width, int new_height) override;
 
 private:
-    void boundGridPositionX(int& grid_position_x);
-    void boundGridPositionY(int& grid_position_y);
+    int boundGridPositionX(int grid_position_x);
+    int boundGridPositionY(int grid_position_y);
     int calculateGridIndex(int pixel_coordinate);
     int calculatePixelCoordinate(int grid_index);
     void handleArrowKeyPress(QKeyEvent* event);
@@ -46,6 +46,7 @@ private:
     void setAllMapsInvisible();
     void setCosmeticCursorPosition(int grid_position_x, int grid_position_y);
     void setRealCursorPosition(int grid_position_x, int grid_position_y);
+    void setTrueSpacePosition(int grid_position_x, int grid_position_y);
     void updateScale();
 
     bool is_key_left_pressed{false};
@@ -56,6 +57,8 @@ private:
     const static int cursor_center_offset{4};
     int cursor_grid_position_x{0};
     int cursor_grid_position_y{0};
+    int true_space_position_x{0};
+    int true_space_position_y{0};
     const static int bottom_grid_bound{236};
     const static int left_grid_bound{7};
     const static int right_grid_bound{248};

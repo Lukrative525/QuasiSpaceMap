@@ -59,7 +59,7 @@ void GraphicsViewer::keyPressEvent(QKeyEvent* event)
     }
     else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
     {
-        emit mousePressed(cursor_grid_position_x, cursor_grid_position_y);
+        emit mousePressed(true_space_position_x, true_space_position_y);
     }
     else
     {
@@ -96,25 +96,25 @@ void GraphicsViewer::mouseMoveEvent(QMouseEvent* event)
 
     int grid_position_x = calculateGridIndex(mouse_position.x());
     int grid_position_y = calculateGridIndex(mouse_position.y());
-    boundGridPositionX(grid_position_x);
-    boundGridPositionY(grid_position_y);
+
+    grid_position_x = boundGridPositionX(grid_position_x);
+    grid_position_y = boundGridPositionY(grid_position_y);
 
     if (grid_position_x != cursor_grid_position_x || grid_position_y != cursor_grid_position_y)
     {
-        setCosmeticCursorPosition(grid_position_x, grid_position_y);
+        cursor_grid_position_x = grid_position_x;
+        cursor_grid_position_y = grid_position_y;
+
+        setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
+        setTrueSpacePosition(cursor_grid_position_x, cursor_grid_position_y);
+
+        update();
     }
 }
 
 void GraphicsViewer::mousePressEvent(QMouseEvent* event)
 {
-    QPoint mouse_position = event->pos();
-
-    int grid_position_x = calculateGridIndex(mouse_position.x());
-    int grid_position_y = calculateGridIndex(mouse_position.y());
-    boundGridPositionX(grid_position_x);
-    boundGridPositionY(grid_position_y);
-
-    emit mousePressed(grid_position_x, grid_position_y);
+    emit mousePressed(true_space_position_x, true_space_position_y);
 }
 
 void GraphicsViewer::resizeGL(int new_width, int new_height)
@@ -126,28 +126,32 @@ void GraphicsViewer::resizeGL(int new_width, int new_height)
     updateScale();
 }
 
-void GraphicsViewer::boundGridPositionX(int& grid_position_x)
+int GraphicsViewer::boundGridPositionX(int grid_position_x)
 {
     if (grid_position_x < left_grid_bound)
     {
-        grid_position_x = left_grid_bound;
+        return left_grid_bound;
     }
     else if (grid_position_x > right_grid_bound)
     {
-        grid_position_x = right_grid_bound;
+        return right_grid_bound;
     }
+
+    return grid_position_x;
 }
 
-void GraphicsViewer::boundGridPositionY(int& grid_position_y)
+int GraphicsViewer::boundGridPositionY(int grid_position_y)
 {
     if (grid_position_y < top_grid_bound)
     {
-        grid_position_y = top_grid_bound;
+        return top_grid_bound;
     }
     else if (grid_position_y > bottom_grid_bound)
     {
-        grid_position_y = bottom_grid_bound;
+        return bottom_grid_bound;
     }
+
+    return grid_position_y;
 }
 
 int GraphicsViewer::calculateGridIndex(int pixel_coordinate)
@@ -187,8 +191,14 @@ void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
         cursor_grid_position_x += 1 * (move_delay_fuse == move_delay_fuse_start_length);
     }
 
+    cursor_grid_position_x = boundGridPositionX(cursor_grid_position_x);
+    cursor_grid_position_y = boundGridPositionY(cursor_grid_position_y);
+
     setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
     setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
+    setTrueSpacePosition(cursor_grid_position_x, cursor_grid_position_y);
+
+    update();
 
     move_delay_timer->start();
 }
@@ -301,8 +311,15 @@ void GraphicsViewer::onTimer()
     {
         cursor_grid_position_x += move_speed * (is_key_right_pressed - is_key_left_pressed);
         cursor_grid_position_y += move_speed * (is_key_down_pressed - is_key_up_pressed);
+
+        cursor_grid_position_x = boundGridPositionX(cursor_grid_position_x);
+        cursor_grid_position_y = boundGridPositionY(cursor_grid_position_y);
+
         setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
         setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
+        setTrueSpacePosition(cursor_grid_position_x, cursor_grid_position_y);
+
+        update();
     }
 
     if (move_delay_fuse == 0)
@@ -337,41 +354,55 @@ void GraphicsViewer::setAllMapsInvisible()
 
 void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_position_y)
 {
-    boundGridPositionX(grid_position_x);
-    boundGridPositionY(grid_position_y);
-
-    if (images[hyper_space_index].instances[0].is_active())
-    {
-        const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
-        if (star_system != nullptr)
-        {
-            text_manager.updateCoordinates(star_system->true_space_position_x(), star_system->true_space_position_y());
-        }
-    }
-
-    cursor_grid_position_x = grid_position_x;
-    cursor_grid_position_y = grid_position_y;
     int pixel_coordinate_x = calculatePixelCoordinate(grid_position_x);
     int pixel_coordinate_y = calculatePixelCoordinate(grid_position_y);
 
     images[cursor_index].instances[0].setX(pixel_coordinate_x - (cursor_center_offset * scale));
     images[cursor_index].instances[0].setY(pixel_coordinate_y - (cursor_center_offset * scale));
-
-    update();
 }
 
 void GraphicsViewer::setRealCursorPosition(int grid_position_x, int grid_position_y)
 {
     if (this->hasFocus())
     {
-        boundGridPositionX(grid_position_x);
-        boundGridPositionY(grid_position_y);
-        cursor_grid_position_x = grid_position_x;
-        cursor_grid_position_y = grid_position_y;
         QPoint scene_position(calculatePixelCoordinate(cursor_grid_position_x), calculatePixelCoordinate(cursor_grid_position_y));
         QPoint global_position = mapToGlobal(scene_position);
         QCursor::setPos(global_position);
     }
+}
+
+void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position_y)
+{
+    if (images[hyper_space_index].instances[0].is_active())
+    {
+        const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
+        if (star_system != nullptr)
+        {
+            true_space_position_x = star_system->true_space_position_x();
+            true_space_position_y = star_system->true_space_position_y();
+        }
+        else
+        {
+            true_space_position_x = star_chart.getTrueSpaceX(grid_position_x - left_grid_bound);
+            true_space_position_y = star_chart.getTrueSpaceY(grid_position_y - top_grid_bound);
+        }
+    }
+    else
+    {
+        const StarSystem* portal = star_chart.getPortal(Coordinate(grid_position_x, grid_position_y));
+        if (portal != nullptr)
+        {
+            true_space_position_x = portal->true_space_position_x();
+            true_space_position_y = portal->true_space_position_y();
+        }
+        else
+        {
+            true_space_position_x = star_chart.getTrueSpaceX(grid_position_x - left_grid_bound);
+            true_space_position_y = star_chart.getTrueSpaceY(grid_position_y - top_grid_bound);
+        }
+    }
+
+    text_manager.updateCoordinates(true_space_position_x, true_space_position_y);
 }
 
 void GraphicsViewer::updateScale()
@@ -395,9 +426,12 @@ void GraphicsViewer::updateScale()
             }
         }
 
-        setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
-
         text_manager.refreshScale();
+
+        setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
+        setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
+        setTrueSpacePosition(cursor_grid_position_x, cursor_grid_position_y);
+
         updateGeometry();
     }
 }

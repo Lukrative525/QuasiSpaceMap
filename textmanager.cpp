@@ -17,7 +17,7 @@ void TextManager::refreshScale()
     placePixels();
 }
 
-void TextManager::updateCoordinates(float x, float y)
+void TextManager::updateCoordinates(int x, int y)
 {
     Digits x_digits = extractDigits(x);
     Digits y_digits = extractDigits(y);
@@ -41,14 +41,21 @@ void TextManager::drawDigit(int location, int digit)
     }
 }
 
-Digits TextManager::extractDigits(float value)
+Digits TextManager::extractDigits(int value)
 {
-    int value_as_int = static_cast<int>(value);
-    int hundreds = (value_as_int / 100) % 10;
-    int tens     = (value_as_int / 10) % 10;
-    int ones     = value_as_int % 10;
+    if (value < 0)
+    {
+        return {0, 0, 0, 0};
+    }
+    else if (value > 9999)
+    {
+        return {9, 9, 9, 9};
+    }
 
-    int tenths = static_cast<int>(value * 10) % 10;
+    int hundreds = value / 1000;
+    int tens = (value / 100) % 10;
+    int ones = (value / 10) % 10;
+    int tenths = value % 10;
 
     return {hundreds, tens, ones, tenths};
 }

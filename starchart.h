@@ -11,9 +11,13 @@ class StarChart
 {
 public:
     StarChart();
+    const StarSystem* getPortal(Coordinate grid_position);
     const StarSystem* getStarSystem(Coordinate grid_position);
+    int getTrueSpaceX(int grid_position_x);
+    int getTrueSpaceY(int grid_position_y);
 
 private:
+    std::unordered_map<Coordinate, StarSystem, CoordinateHash> portals;
     std::unordered_map<Coordinate, StarSystem, CoordinateHash> stars;
 };
 

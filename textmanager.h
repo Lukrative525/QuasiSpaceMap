@@ -19,11 +19,11 @@ public:
     explicit TextManager();
     void setPixelImage(Image* new_pixel_image);
     void refreshScale();
-    void updateCoordinates(float x, float y);
+    void updateCoordinates(int x, int y);
 
 private:
     void drawDigit(int location, int digit);
-    Digits extractDigits(float value);
+    Digits extractDigits(int value);
     void initialize();
     void placePixels();
 

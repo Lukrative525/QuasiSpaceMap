@@ -4,23 +4,9 @@
 
 namespace ppf
 {
-    float calculateGameUnitsFromGridIndicesX(int grid_index_x)
+    std::vector<int> calculateDifferenceBetween(int value, const std::vector<int>& vector)
     {
-        float game_units_x = (grid_index_x - 7.0) * 995.8 / 240 + 2.0;
-
-        return game_units_x;
-    }
-
-    float calculateGameUnitsFromGridIndicesY(int grid_index_y)
-    {
-        float game_units_y = (236.0 - grid_index_y) * 995.6 / 226 + 2.1;
-
-        return game_units_y;
-    }
-
-    std::vector<float> calculateDifferenceBetween(float value, const std::vector<float>& vector)
-    {
-        std::vector<float> difference(vector.size(), 0.0);
+        std::vector<int> difference(vector.size(), 0);
 
         for (int i{0}; i < vector.size(); i++)
         {
@@ -30,14 +16,14 @@ namespace ppf
         return difference;
     }
 
-    float calculateHypotenuse(float value_1, float value_2)
+    int calculateHypotenuse(int value_1, int value_2)
     {
-        float hypotenuse = std::sqrt(std::pow(value_1, 2) + std::pow(value_2, 2));
+        int hypotenuse = std::sqrt(std::pow(value_1, 2) + std::pow(value_2, 2));
 
         return hypotenuse;
     }
 
-    std::vector<float> calculateHypotenuses(const std::vector<float>& vector_1, const std::vector<float>& vector_2)
+    std::vector<int> calculateHypotenuses(const std::vector<int>& vector_1, const std::vector<int>& vector_2)
     {
         int smallest_size{0};
         if (vector_1.size() <= vector_2.size())
@@ -49,7 +35,7 @@ namespace ppf
             smallest_size = vector_2.size();
         }
 
-        std::vector<float> hypotenuses(smallest_size, 0.0);
+        std::vector<int> hypotenuses(smallest_size, 0.0);
 
         for (int i{0}; i < smallest_size; i++)
         {
@@ -59,7 +45,7 @@ namespace ppf
         return hypotenuses;
     }
 
-    int argmin(const std::vector<float>& vector)
+    int argmin(const std::vector<int>& vector)
     {
         int argmin = std::distance(vector.begin(), std::min_element(vector.begin(), vector.end()));
 
