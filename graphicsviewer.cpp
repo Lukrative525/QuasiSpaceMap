@@ -60,6 +60,7 @@ void GraphicsViewer::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
     {
         emit mousePressed(true_space_position_x, true_space_position_y);
+        qDebug() << cursor_grid_position_x << "," << cursor_grid_position_y;
     }
     else
     {
@@ -376,10 +377,16 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
     if (images[hyper_space_index].instances[0].is_active())
     {
         const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
+        const StarSystem* portal_exit = star_chart.getPortalExit(Coordinate(grid_position_x, grid_position_y));
         if (star_system != nullptr)
         {
             true_space_position_x = star_system->true_space_position_x();
             true_space_position_y = star_system->true_space_position_y();
+        }
+        else if (portal_exit != nullptr)
+        {
+            true_space_position_x = portal_exit->true_space_position_x();
+            true_space_position_y = portal_exit->true_space_position_y();
         }
         else
         {
@@ -389,11 +396,11 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
     }
     else
     {
-        const StarSystem* portal = star_chart.getPortal(Coordinate(grid_position_x, grid_position_y));
-        if (portal != nullptr)
+        const StarSystem* portal_entrance = star_chart.getPortalEntrance(Coordinate(grid_position_x, grid_position_y));
+        if (portal_entrance != nullptr)
         {
-            true_space_position_x = portal->true_space_position_x();
-            true_space_position_y = portal->true_space_position_y();
+            true_space_position_x = portal_entrance->true_space_position_x();
+            true_space_position_y = portal_entrance->true_space_position_y();
         }
         else
         {

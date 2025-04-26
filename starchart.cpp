@@ -3,8 +3,12 @@
 
 StarChart::StarChart()
 {
-    for (const StarInfo& info : portal_data) {
-        portals.emplace(Coordinate{info.grid_x, info.grid_y}, StarSystem{info.name, info.pos_x, info.pos_y});
+    for (const StarInfo& info : portal_entrance_data) {
+        portal_entrances.emplace(Coordinate{info.grid_x, info.grid_y}, StarSystem{info.name, info.pos_x, info.pos_y});
+    }
+
+    for (const StarInfo& info : portal_exit_data) {
+        portal_exits.emplace(Coordinate{info.grid_x, info.grid_y}, StarSystem{info.name, info.pos_x, info.pos_y});
     }
 
     for (const StarInfo& info : star_data) {
@@ -12,10 +16,21 @@ StarChart::StarChart()
     }
 }
 
-const StarSystem* StarChart::getPortal(Coordinate grid_position)
+const StarSystem* StarChart::getPortalEntrance(Coordinate grid_position)
 {
-    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::const_iterator iterator = portals.find(grid_position);
-    if (iterator != portals.end())
+    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::const_iterator iterator = portal_entrances.find(grid_position);
+    if (iterator != portal_entrances.end())
+    {
+        return &(iterator->second);
+    }
+
+    return nullptr;
+}
+
+const StarSystem* StarChart::getPortalExit(Coordinate grid_position)
+{
+    std::unordered_map<Coordinate, StarSystem, CoordinateHash>::const_iterator iterator = portal_exits.find(grid_position);
+    if (iterator != portal_exits.end())
     {
         return &(iterator->second);
     }

@@ -12,23 +12,40 @@ struct StarInfo {
     int pos_y;
 };
 
-constexpr std::array<StarInfo, 16> portal_data = {{
-    {"Unknown", 121, 133, 4760, 4580},
-    {"Unknown", 128, 132, 5020, 4600},
-    {"Unknown", 119, 131, 4680, 4640},
-    {"Unknown", 131, 131, 5160, 4660},
-    {"Unknown", 128, 129, 5060, 4740},
-    {"Unknown", 117, 125, 4580, 4920},
-    {"Unknown", 125, 125, 4920, 4920},
-    {"Unknown", 121, 124, 4760, 4960},
-    {"Unknown", 114, 122, 4480, 5040},
-    {"Unknown", 119, 120, 4660, 5140},
-    {"Unknown", 132, 120, 5200, 5140},
-    {"Unknown", 134, 117, 5300, 5280},
-    {"Unknown", 138, 116, 5440, 5320},
-    {"Unknown", 124, 114, 4880, 5380},
-    {"Unknown", 132, 114, 5200, 5400},
-    {"Unknown", 154, 103, 6134, 5900}
+constexpr std::array<StarInfo, 15> portal_entrance_data = {{
+    {"Portal Entrance", 121, 133, 4760, 4580},
+    {"Portal Entrance", 128, 132, 5020, 4600},
+    {"Portal Entrance", 119, 131, 4680, 4640},
+    {"Portal Entrance", 131, 131, 5160, 4660},
+    {"Portal Entrance", 128, 129, 5060, 4740},
+    {"Portal Entrance", 117, 125, 4580, 4920},
+    {"Portal Entrance", 125, 125, 4920, 4920},
+    {"Portal Entrance", 121, 124, 4760, 4960},
+    {"Portal Entrance", 114, 122, 4480, 5040},
+    {"Portal Entrance", 119, 120, 4660, 5140},
+    {"Portal Entrance", 132, 120, 5200, 5140},
+    {"Portal Entrance", 134, 117, 5300, 5280},
+    {"Portal Entrance", 138, 116, 5440, 5320},
+    {"Portal Entrance", 124, 114, 4880, 5380},
+    {"Portal Entrance", 132, 114, 5200, 5400}
+}};
+
+constexpr std::array<StarInfo, 15> portal_exit_data = {{
+    {"Portal Exit", 105, 61, 4091, 7748},
+    {"Portal Exit", 83, 125, 3184, 4906},
+    {"Portal Exit", 229, 98, 9211, 6104},
+    {"Portal Exit", 143, 209, 5673, 1207},
+    {"Portal Exit", 53, 215, 1910, 926},
+    {"Portal Exit", 214, 233, 8607, 151},
+    {"Portal Exit", 8, 199, 50,   1647},
+    {"Portal Exit", 154, 143, 6117, 4131},
+    {"Portal Exit", 143, 16, 5658, 9712},
+    {"Portal Exit", 62, 146, 2302, 3988},
+    {"Portal Exit", 9, 23, 112,  9409},
+    {"Portal Exit", 193, 34, 7752, 8906},
+    {"Portal Exit", 15, 93, 368,  6332},
+    {"Portal Exit", 241, 165, 9735, 3153},
+    {"Portal Exit", 148, 95, 5850, 6213}
 }};
 
 constexpr std::array<StarInfo, 503> star_data = {{
