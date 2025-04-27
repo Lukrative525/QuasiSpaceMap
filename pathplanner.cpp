@@ -32,14 +32,13 @@ void PathPlanner::determineBestPath()
 
     if (best_choice == 0)
     {
-        QString message = "Take the direct route for " + ppf::formatIntAsString(fuel_no_portal) + " units fuel";
-        emit requestPrint(message);
+        emit requestPrint("Direct route: " + ppf::formatIntAsString(fuel_no_portal) + " units fuel");
     }
     else if (best_choice == 1)
     {
         emit requestUpdateMap(shortest_index);
-        QString message = "Take the portal route for " + ppf::formatIntAsString(fuel_with_portal) + " units fuel";
-        emit requestPrint(message);
+        emit requestPrint("Portal route: " + ppf::formatIntAsString(fuel_with_portal) + " units fuel");
+        emit requestPrint("Direct route: " + ppf::formatIntAsString(fuel_no_portal) + " units fuel");
     }
 }
 
