@@ -60,7 +60,6 @@ void GraphicsViewer::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
     {
         emit mousePressed(true_space_position_x, true_space_position_y);
-        qDebug() << cursor_grid_position_x << "," << cursor_grid_position_y;
     }
     else
     {

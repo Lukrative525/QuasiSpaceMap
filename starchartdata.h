@@ -12,7 +12,7 @@ struct StarInfo {
     int pos_y;
 };
 
-constexpr std::array<StarInfo, 15> portal_entrance_data = {{
+constexpr std::array<StarInfo, 16> portal_entrance_data = {{
     {"Portal Entrance", 121, 133, 4760, 4580},
     {"Portal Entrance", 128, 132, 5020, 4600},
     {"Portal Entrance", 119, 131, 4680, 4640},
@@ -27,7 +27,8 @@ constexpr std::array<StarInfo, 15> portal_entrance_data = {{
     {"Portal Entrance", 134, 117, 5300, 5280},
     {"Portal Entrance", 138, 116, 5440, 5320},
     {"Portal Entrance", 124, 114, 4880, 5380},
-    {"Portal Entrance", 132, 114, 5200, 5400}
+    {"Portal Entrance", 132, 114, 5200, 5400},
+    {"Falayalaralfali", 154, 103, 6134, 5900}
 }};
 
 constexpr std::array<StarInfo, 15> portal_exit_data = {{

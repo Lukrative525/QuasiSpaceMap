@@ -12,6 +12,7 @@ public:
     PathPlanner(QObject* parent = nullptr);
     void determineBestPath();
     void queueMousePressCoordinates(int grid_index_x, int grid_index_y);
+
     const static int number_quasi_space_maps{15};
     int number_queued_coordinates{0};
     int origin_true_space_position_x;

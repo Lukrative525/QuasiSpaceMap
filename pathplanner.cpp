@@ -24,38 +24,21 @@ void PathPlanner::determineBestPath()
 
     int distance_no_portal = ppf::calculateHypotenuse((origin_true_space_position_x - destination_true_space_position_x), (origin_true_space_position_y - destination_true_space_position_y));
     int distance_with_portal = ppf::calculateHypotenuse((portal_output_x[shortest_index] - destination_true_space_position_x), (portal_output_y[shortest_index] - destination_true_space_position_y));
-    int distance_with_portal_no_spawner = distance_with_portal + ppf::calculateHypotenuse((origin_true_space_position_x - 438), (origin_true_space_position_y - 6372));
 
-    int fuel_no_portal = distance_no_portal / 10;
-    int fuel_with_portal = distance_with_portal / 10 + 10;
-    int fuel_with_portal_no_spawner = distance_with_portal_no_spawner / 10;
+    int fuel_no_portal = (distance_no_portal + 5) / 10;
+    int fuel_with_portal = (distance_with_portal + 5) / 10 + 100;
 
-    int best_choice = ppf::argmin(std::vector<int>{fuel_no_portal, fuel_with_portal, fuel_with_portal_no_spawner});
+    int best_choice = ppf::argmin(std::vector<int>{fuel_no_portal, fuel_with_portal});
 
-    if (fuel_no_portal == fuel_with_portal && fuel_no_portal == fuel_with_portal_no_spawner)
+    if (best_choice == 0)
     {
-        emit requestUpdateMap(shortest_index);
-        QString message = "Take any route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel"
-            + "\nNatural portal located at (43.8, 637.2), open from 17th through 19th";
-        emit requestPrint(message);
-    }
-    else if (best_choice == 0)
-    {
-        QString message = "Take the direct route for " + QString::number(fuel_no_portal, 'f', 1) + " units fuel";
+        QString message = "Take the direct route for " + ppf::formatIntAsString(fuel_no_portal) + " units fuel";
         emit requestPrint(message);
     }
     else if (best_choice == 1)
     {
         emit requestUpdateMap(shortest_index);
-        QString message = "Take the portal route for " + QString::number(fuel_with_portal, 'f', 1) + " units fuel";
-        emit requestPrint(message);
-    }
-    else if (best_choice == 2)
-    {
-        emit requestUpdateMap(shortest_index);
-        QString message = "If permissible, take the natural portal for " + QString::number(fuel_with_portal_no_spawner, 'f', 1) + " units fuel"
-            + "\nOtherwise, take the portal route for " + QString::number(fuel_with_portal, 'f', 1) + " units fuel"
-            + "\nNatural portal located at (43.8, 637.2), open from 17th through 19th";
+        QString message = "Take the portal route for " + ppf::formatIntAsString(fuel_with_portal) + " units fuel";
         emit requestPrint(message);
     }
 }
@@ -66,7 +49,7 @@ void PathPlanner::queueMousePressCoordinates(int true_space_position_x, int true
     {
         origin_true_space_position_x = true_space_position_x;
         origin_true_space_position_y = true_space_position_y;
-        QString message = QString::number(origin_true_space_position_x, 'f', 1) + ", " + QString::number(origin_true_space_position_y, 'f', 1) + "\n\nDestination:";
+        QString message = ppf::formatIntAsString(origin_true_space_position_x) + ", " + ppf::formatIntAsString(origin_true_space_position_y) + "\n\nDestination:";
         emit requestPrint(message);
         number_queued_coordinates = 1;
     }
@@ -74,7 +57,7 @@ void PathPlanner::queueMousePressCoordinates(int true_space_position_x, int true
     {
         destination_true_space_position_x = true_space_position_x;
         destination_true_space_position_y = true_space_position_y;
-        QString message = QString::number(destination_true_space_position_x, 'f', 1) + ", " + QString::number(destination_true_space_position_y, 'f', 1) + "\n";
+        QString message = ppf::formatIntAsString(destination_true_space_position_x) + ", " + ppf::formatIntAsString(destination_true_space_position_y) + "\n";
         emit requestPrint(message);
         number_queued_coordinates = 2;
 
