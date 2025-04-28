@@ -3,7 +3,7 @@
 
 #include <array>
 
-std::array<std::array<int, 20>, 10> digits
+static constexpr std::array<std::array<int, 20>, 10> digits
 {{
     {
         0, 1, 1, 0,
