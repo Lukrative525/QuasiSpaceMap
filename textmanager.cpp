@@ -42,6 +42,11 @@ void TextManager::drawText(std::string_view text)
     isTextCleared = false;
 }
 
+int TextManager::getRequiredNumberPixels()
+{
+    return digit_pixels + letter_pixels;
+}
+
 void TextManager::refreshScale()
 {
     placePixels();

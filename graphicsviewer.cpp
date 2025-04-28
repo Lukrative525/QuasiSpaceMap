@@ -275,7 +275,7 @@ void GraphicsViewer::loadHyperSpaceMap()
 void GraphicsViewer::loadPurplePixel()
 {
     purple_pixel_index = images.size();
-    addImage(":/images/purple pixel.png", 164);
+    addImage(":/images/purple pixel.png", text_manager.getRequiredNumberPixels());
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()

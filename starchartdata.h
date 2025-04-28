@@ -553,7 +553,7 @@ constexpr std::array<StarInfo, 503> star_data = {{
     {"Alpha Wolf", 45, 197, 1601, 1746},
     {"Beta Wolf", 47, 195, 1666, 1812},
     {"Zeeman", 87, 192, 3352, 1940},
-    {"Unknown", 17, 92, 438, 6372}
+    {"Natural Portal", 17, 92, 438, 6372}
 }};
 
 #endif // STARCHARTDATA_H

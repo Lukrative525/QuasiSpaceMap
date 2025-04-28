@@ -19,6 +19,7 @@ public:
     explicit TextManager();
     void clearText();
     void drawText(std::string_view text);
+    int getRequiredNumberPixels();
     void refreshScale();
     void setPixelImage(Image* new_pixel_image);
     void updateCoordinates(int x, int y);
