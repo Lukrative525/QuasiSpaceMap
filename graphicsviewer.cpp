@@ -373,6 +373,8 @@ void GraphicsViewer::setRealCursorPosition(int grid_position_x, int grid_positio
 
 void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position_y)
 {
+    text_manager.clearText();
+
     if (images[hyper_space_index].instances[0].is_active())
     {
         const StarSystem* star_system = star_chart.getStarSystem(Coordinate(grid_position_x, grid_position_y));
@@ -381,11 +383,13 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         {
             true_space_position_x = star_system->true_space_position_x();
             true_space_position_y = star_system->true_space_position_y();
+            text_manager.drawText(star_system->name());
         }
         else if (portal_exit != nullptr)
         {
             true_space_position_x = portal_exit->true_space_position_x();
             true_space_position_y = portal_exit->true_space_position_y();
+            text_manager.drawText(portal_exit->name());
         }
         else
         {
@@ -400,6 +404,7 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         {
             true_space_position_x = portal_entrance->true_space_position_x();
             true_space_position_y = portal_entrance->true_space_position_y();
+            text_manager.drawText(portal_entrance->name());
         }
         else
         {

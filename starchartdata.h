@@ -4,7 +4,8 @@
 #include <array>
 #include <string_view>
 
-struct StarInfo {
+struct StarInfo
+{
     std::string_view name;
     int grid_x;
     int grid_y;
