@@ -15,7 +15,7 @@ copy "%BUILD_DIR%\QuasiSpaceMap.exe" "%TARGET_DIR%\QuasiSpaceMap.exe"
 
 :: Deploy the application
 echo Deploying application...
-"%QT_PATH%\windeployqt" --release --dir "%TARGET_DIR%" "%BUILD_DIR%\QuasiSpaceMap.exe"
+"%QT_PATH%\windeployqt" --no-opengl-sw --no-quick-import --no-system-d3d-compiler --no-system-dxc-compiler --no-translations --release --dir "%TARGET_DIR%" "%BUILD_DIR%\QuasiSpaceMap.exe"
 
 echo Deployment complete. Files are in: "%TARGET_DIR%"
 pause
