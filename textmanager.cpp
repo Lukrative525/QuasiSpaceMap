@@ -43,15 +43,6 @@ void TextManager::drawDigit(int location, int digit)
 
 Digits TextManager::extractDigits(int value)
 {
-    if (value < 0)
-    {
-        return {0, 0, 0, 0};
-    }
-    else if (value > 9999)
-    {
-        return {9, 9, 9, 9};
-    }
-
     int hundreds = value / 1000;
     int tens = (value / 100) % 10;
     int ones = (value / 10) % 10;

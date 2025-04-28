@@ -53,6 +53,8 @@ int StarChart::getTrueSpaceX(int grid_position_x)
 {
     int true_space_x = (grid_position_x - 120) * 10041 / 242 + 4999;
 
+    true_space_x = boundTrueSpaceCoordinate(true_space_x);
+
     return true_space_x;
 }
 
@@ -60,5 +62,21 @@ int StarChart::getTrueSpaceY(int grid_position_y)
 {
     int true_space_y = (113 - grid_position_y) * 10001 / 227 + 4999;
 
+    true_space_y = boundTrueSpaceCoordinate(true_space_y);
+
     return true_space_y;
+}
+
+int StarChart::boundTrueSpaceCoordinate(int coordinate)
+{
+    if (coordinate < 0)
+    {
+        return 0;
+    }
+    else if (coordinate > 9999)
+    {
+        return 9999;
+    }
+
+    return coordinate;
 }

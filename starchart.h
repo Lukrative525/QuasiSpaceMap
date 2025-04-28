@@ -18,6 +18,8 @@ public:
     int getTrueSpaceY(int grid_position_y);
 
 private:
+    int boundTrueSpaceCoordinate(int coordinate);
+
     std::unordered_map<Coordinate, StarSystem, CoordinateHash> portal_entrances;
     std::unordered_map<Coordinate, StarSystem, CoordinateHash> portal_exits;
     std::unordered_map<Coordinate, StarSystem, CoordinateHash> stars;
