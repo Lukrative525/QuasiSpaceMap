@@ -3,6 +3,8 @@
 
 StarChart::StarChart()
 {
+    // These unordered_maps dynamically allocated
+
     for (const StarInfo& info : portal_entrance_data) {
         portal_entrances.emplace(Coordinate{info.grid_x, info.grid_y}, StarSystem{info.name, info.pos_x, info.pos_y});
     }
