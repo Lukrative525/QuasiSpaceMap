@@ -29,6 +29,7 @@ void GraphicsViewer::showHyperSpaceMap()
 
 void GraphicsViewer::showMap(int map_index)
 {
+    text_manager.clearText();
     setAllMapsInvisible();
     images[map_index].instances[0].setIsActive(true);
 
