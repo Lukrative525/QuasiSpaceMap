@@ -3,10 +3,10 @@
 
 #include "coordinate.h"
 #include "graphicsviewer.h"
-#include "textfieldfunctions.h"
+#include "pathplannerfunctions.h"
 
 GraphicsViewer::GraphicsViewer(QWidget *parent):
-    ImageViewer{parent}
+    ImageViewer{parent, number_total_images}
 {
     setCursor(Qt::BlankCursor);
     setMouseTracking(true);
@@ -15,16 +15,6 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
 
     setAttribute(Qt::WA_NativeWindow);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-}
-
-Image* GraphicsViewer::getCoordinateDisplayPixelImage()
-{
-    return &images[coordinate_display_image_index];
-}
-
-Image* GraphicsViewer::getNameDisplayPixelImage()
-{
-    return &images[name_display_image_index];
 }
 
 void GraphicsViewer::showHyperSpaceMap()
@@ -174,6 +164,16 @@ int GraphicsViewer::calculatePixelCoordinate(int grid_position)
     return pixel_coordinate;
 }
 
+Image* GraphicsViewer::getCoordinateDisplayPixelImage()
+{
+    return &images[coordinate_display_image_index];
+}
+
+Image* GraphicsViewer::getNameDisplayPixelImage()
+{
+    return &images[name_display_image_index];
+}
+
 void GraphicsViewer::handleArrowKeyPress(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Up)
@@ -271,6 +271,7 @@ void GraphicsViewer::loadCoordinateDisplay()
 {
     int coordinate_display_field_width{53};
 
+    coordinate_display.setIsTextCentered(false);
     coordinate_display.setFieldPosition(194, 1);
     coordinate_display.setFieldWidth(coordinate_display_field_width);
 
@@ -440,10 +441,10 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         }
     }
 
-    Digits true_space_digits_x = tff::extractDigits(true_space_position_x);
-    Digits true_space_digits_y = tff::extractDigits(true_space_position_y);
+    Digits true_space_digits_x = ppf::extractDigits(true_space_position_x);
+    Digits true_space_digits_y = ppf::extractDigits(true_space_position_y);
 
-    coordinate_display.drawText(tff::formatDigits(true_space_digits_x) + " : " + tff::formatDigits(true_space_digits_y));
+    coordinate_display.drawText(ppf::formatDigits(true_space_digits_x) + " : " + ppf::formatDigits(true_space_digits_y));
 }
 
 void GraphicsViewer::updateScale()
@@ -473,6 +474,8 @@ void GraphicsViewer::updateScale()
         setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
         setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
         setTrueSpacePosition(cursor_grid_position_x, cursor_grid_position_y);
+
+        emit scaleChanged(scale);
 
         updateGeometry();
     }

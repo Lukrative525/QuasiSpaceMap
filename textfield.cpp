@@ -1,5 +1,4 @@
 #include <cmath>
-#include <QDebug>
 
 #include "imageinstance.h"
 #include "textfield.h"

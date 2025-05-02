@@ -62,8 +62,8 @@ target_sources(QuasiSpaceMap
         textfield.cpp
         textfield.h
         textfielddata.h
-        textfieldfunctions.cpp
-        textfieldfunctions.h
+        textviewer.cpp
+        textviewer.h
 )
 
 target_compile_features(QuasiSpaceMap PUBLIC cxx_std_17)

@@ -19,7 +19,7 @@ public:
     int destination_true_space_position_y;
 
 signals:
-    void requestPrint(QString message);
+    void requestPrint(std::string_view message, int line);
     void requestResetMap();
     void requestUpdateMap(int portal_index);
 

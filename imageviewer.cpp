@@ -2,8 +2,9 @@
 
 #include "imageviewer.h"
 
-ImageViewer::ImageViewer(QWidget *parent):
+ImageViewer::ImageViewer(QWidget *parent, int reserved_images):
     QOpenGLWidget{parent},
+    reserved_images{reserved_images},
     quad_vertices
     {
         // x     y     z     u     v
@@ -13,17 +14,22 @@ ImageViewer::ImageViewer(QWidget *parent):
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f
     }
 {
+    images.reserve(reserved_images);
 }
 
 void ImageViewer::addImage(const QString& file_path)
 {
+    screenAddImageRequest();
+
     addImage(file_path, 1);
 }
 
-void ImageViewer::addImage(const QString& file_path, int reserved_images)
+void ImageViewer::addImage(const QString& file_path, int reserved_instances)
 {
+    screenAddImageRequest();
+
     int image_index = images.size();
-    images.emplace_back(file_path, reserved_images);
+    images.emplace_back(file_path, reserved_instances);
 
     addToQueuedActions([this, image_index]() {initializeTexture(images[image_index]);});
     addToQueuedActions([this, image_index]() {initializeImageGeometry(images[image_index]);});
@@ -230,6 +236,14 @@ QString ImageViewer::readShaderSource(const QString& file_path)
     }
 
     return data;
+}
+
+void ImageViewer::screenAddImageRequest()
+{
+    if (images.size() >= reserved_images)
+    {
+        throw std::runtime_error("Cannot reserve more memory for Image objects");
+    }
 }
 
 void ImageViewer::updateInstanceBuffer(const Image& image)

@@ -13,9 +13,11 @@ class ImageViewer: public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
 public:
-    explicit ImageViewer(QWidget* parent = nullptr);
+    explicit ImageViewer(QWidget* parent = nullptr, int reserved_images = 1);
     void addImage(const QString& file_path);
-    void addImage(const QString& file_path, int reserved_images);
+    void addImage(const QString& file_path, int reserved_instances);
+
+    const int reserved_images;
 
 protected:
     void addToQueuedActions(std::function<void()> action);
@@ -32,6 +34,7 @@ private:
     void initializeShaderProgram();
     void initializeTexture(Image& image);
     QString readShaderSource(const QString& file_path);
+    void screenAddImageRequest();
     void updateInstanceBuffer(const Image& image);
     void verifyProgramLinking(const uint& shader_to_verify);
     void verifyShaderCompilation(const uint& shader_to_verify);

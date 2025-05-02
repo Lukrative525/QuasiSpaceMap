@@ -10,14 +10,13 @@ class GraphicsViewer: public ImageViewer
     Q_OBJECT
 public:
     explicit GraphicsViewer(QWidget* parent = nullptr);
-    Image* getCoordinateDisplayPixelImage();
-    Image* getNameDisplayPixelImage();
     void showHyperSpaceMap();
     void showMap(int map_index);
     void showQuasiSpaceMap(int quasi_space_index);
 
 signals:
     void mousePressed(int true_space_position_x, int true_space_position_y);
+    void scaleChanged(int new_scale);
 
 protected:
     void enterEvent(QEnterEvent* event) override;
@@ -33,6 +32,8 @@ private:
     int boundGridPositionY(int grid_position_y);
     int calculateGridIndex(int pixel_coordinate);
     int calculatePixelCoordinate(int grid_index);
+    Image* getCoordinateDisplayPixelImage();
+    Image* getNameDisplayPixelImage();
     void handleArrowKeyPress(QKeyEvent* event);
     void handleArrowKeyRelease(QKeyEvent* event);
     bool isArrowKey(QKeyEvent* event);
@@ -67,6 +68,7 @@ private:
     const static int top_grid_bound{10};
 
     const static int number_quasi_space_maps{15};
+    const static int number_total_images{19};
 
     int height;
     int width;

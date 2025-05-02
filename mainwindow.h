@@ -5,6 +5,7 @@
 
 #include "graphicsviewer.h"
 #include "pathplanner.h"
+#include "textviewer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -22,7 +23,7 @@ public:
 
 public slots:
     void handleMousePressEvent(int grid_position_x, int grid_position_y);
-    void handlePrintRequest(QString message);
+    void handlePrintRequest(std::string_view message, int line);
     void resetMap();
     void updateMap(int index);
 
@@ -32,12 +33,13 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-    void print(QString message);
+    void print(std::string_view message, int line);
 
     GraphicsViewer* graphics_viewer;
     PathPlanner* path_planner;
     QPoint original_position;
     QSize original_size;
+    TextViewer* text_viewer;
     Ui::MainWindow* ui;
     bool wasMaximized{false};
 };

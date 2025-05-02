@@ -1,7 +1,7 @@
 #ifndef STARSYSTEM_H
 #define STARSYSTEM_H
 
-#include <QString>
+#include <string_view>
 
 class StarSystem
 {

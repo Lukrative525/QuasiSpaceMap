@@ -1,12 +1,22 @@
 #ifndef PATHPLANNERFUNCTIONS_H
 #define PATHPLANNERFUNCTIONS_H
 
-#include <QString>
+#include <string>
+
+struct Digits
+{
+    int hundreds;
+    int tens;
+    int ones;
+    int tenths;
+};
 
 namespace ppf
 {
     int calculateHypotenuse(int value_1, int value_2);
-    QString formatIntAsString(int number);
+    Digits extractDigits(int value);
+    std::string formatDigits(Digits digits);
+    std::string formatDigitsNoLeadingZeros(Digits digits);
     int sqrt(int value);
 }
 

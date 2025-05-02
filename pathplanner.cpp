@@ -1,5 +1,4 @@
 #include <QDebug>
-#include <QString>
 
 #include "pathplanner.h"
 #include "pathplannerfunctions.h"
@@ -15,16 +14,20 @@ void PathPlanner::queueMousePressCoordinates(int true_space_position_x, int true
     {
         origin_true_space_position_x = true_space_position_x;
         origin_true_space_position_y = true_space_position_y;
-        QString message = ppf::formatIntAsString(origin_true_space_position_x) + ", " + ppf::formatIntAsString(origin_true_space_position_y) + "\n\nDestination:";
-        emit requestPrint(message);
+        Digits origin_true_space_digits_x = ppf::extractDigits(origin_true_space_position_x);
+        Digits origin_true_space_digits_y = ppf::extractDigits(origin_true_space_position_y);
+        std::string message = ppf::formatDigits(origin_true_space_digits_x) + " : " + ppf::formatDigits(origin_true_space_digits_y);
+        emit requestPrint(message, 1);
         number_queued_coordinates = 1;
     }
     else if (number_queued_coordinates == 1)
     {
         destination_true_space_position_x = true_space_position_x;
         destination_true_space_position_y = true_space_position_y;
-        QString message = ppf::formatIntAsString(destination_true_space_position_x) + ", " + ppf::formatIntAsString(destination_true_space_position_y) + "\n";
-        emit requestPrint(message);
+        Digits destination_true_space_digits_x = ppf::extractDigits(destination_true_space_position_x);
+        Digits destination_true_space_digits_y = ppf::extractDigits(destination_true_space_position_y);
+        std::string message = ppf::formatDigits(destination_true_space_digits_x) + " : " + ppf::formatDigits(destination_true_space_digits_y);
+        emit requestPrint(message, 4);
         number_queued_coordinates = 2;
 
         determineBestPath();
@@ -32,7 +35,7 @@ void PathPlanner::queueMousePressCoordinates(int true_space_position_x, int true
     else
     {
         emit requestResetMap();
-        emit requestPrint("Origin:");
+
         number_queued_coordinates = 0;
     }
 }
@@ -86,12 +89,15 @@ void PathPlanner::determineBestPath()
 
     if (best_choice == 0)
     {
-        emit requestPrint("Direct route: " + ppf::formatIntAsString(fuel_no_portal) + " units fuel");
+        Digits fuel_no_portal_digits = ppf::extractDigits(fuel_no_portal);
+        emit requestPrint("Direct route: " + ppf::formatDigitsNoLeadingZeros(fuel_no_portal_digits) + " units fuel", 6);
     }
     else if (best_choice == 1)
     {
         emit requestUpdateMap(shortest_index);
-        emit requestPrint("Portal route: " + ppf::formatIntAsString(fuel_with_portal) + " units fuel");
-        emit requestPrint("Direct route: " + ppf::formatIntAsString(fuel_no_portal) + " units fuel");
+        Digits fuel_with_portal_digits = ppf::extractDigits(fuel_with_portal);
+        Digits fuel_no_portal_digits = ppf::extractDigits(fuel_no_portal);
+        emit requestPrint("Portal route: " + ppf::formatDigitsNoLeadingZeros(fuel_with_portal_digits) + " units fuel", 6);
+        emit requestPrint("Direct route: " + ppf::formatDigitsNoLeadingZeros(fuel_no_portal_digits) + " units fuel", 7);
     }
 }

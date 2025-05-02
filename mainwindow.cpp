@@ -1,25 +1,29 @@
+#include <QKeyEvent>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent):
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
-    QFontDatabase::addApplicationFont(":/fonts/digital-7 (mono).ttf");
-
     ui->setupUi(this);
 
     graphics_viewer = new GraphicsViewer(this);
     path_planner = new PathPlanner(this);
+    text_viewer = new TextViewer(this);
 
     ui->graphics_frame_layout->addWidget(graphics_viewer);
+    ui->text_frame_layout->addWidget(text_viewer);
 
     connect(path_planner, &PathPlanner::requestPrint, this, &MainWindow::handlePrintRequest);
     connect(path_planner, &PathPlanner::requestResetMap, this, &MainWindow::resetMap);
     connect(path_planner, &PathPlanner::requestUpdateMap, this, &MainWindow::updateMap);
     connect(graphics_viewer, &GraphicsViewer::mousePressed, this, &MainWindow::handleMousePressEvent);
+    connect(graphics_viewer, &GraphicsViewer::scaleChanged, text_viewer, &TextViewer::setScale);
 
-    print("Origin:");
+    print("Origin:", 0);
+    print("Destination:", 3);
 }
 
 MainWindow::~MainWindow()
@@ -32,15 +36,15 @@ void MainWindow::handleMousePressEvent(int grid_position_x, int grid_position_y)
     path_planner->queueMousePressCoordinates(grid_position_x, grid_position_y);
 }
 
-void MainWindow::handlePrintRequest(QString message)
+void MainWindow::handlePrintRequest(std::string_view message, int line)
 {
-    print(message);
+    print(message, line);
 }
 
 void MainWindow::resetMap()
 {
-    ui->plain_text_edit->clear();
     graphics_viewer->showHyperSpaceMap();
+    text_viewer->clear();
 }
 
 void MainWindow::updateMap(int index)
@@ -88,8 +92,10 @@ void MainWindow::showEvent(QShowEvent* event)
     }
 }
 
-void MainWindow::print(QString message)
+void MainWindow::print(std::string_view message, int line)
 {
-    ui->plain_text_edit->appendPlainText(message);
+    text_viewer->text_displays[line].clearText();
+    text_viewer->text_displays[line].drawText(message);
+    text_viewer->update();
 }
 
