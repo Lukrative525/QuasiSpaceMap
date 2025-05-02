@@ -3,14 +3,15 @@
 
 #include "imageviewer.h"
 #include "starchart.h"
-#include "textmanager.h"
+#include "textfield.h"
 
 class GraphicsViewer: public ImageViewer
 {
     Q_OBJECT
 public:
     explicit GraphicsViewer(QWidget* parent = nullptr);
-    Image* getPurplePixelImage();
+    Image* getCoordinateDisplayPixelImage();
+    Image* getNameDisplayPixelImage();
     void showHyperSpaceMap();
     void showMap(int map_index);
     void showQuasiSpaceMap(int quasi_space_index);
@@ -36,9 +37,10 @@ private:
     void handleArrowKeyRelease(QKeyEvent* event);
     bool isArrowKey(QKeyEvent* event);
     void loadAssets();
+    void loadCoordinateDisplay();
     void loadCursor();
     void loadHyperSpaceMap();
-    void loadPurplePixel();
+    void loadNameDisplay();
     void loadQuasiSpaceMaps();
     void loadTimer();
     void onTimer();
@@ -78,14 +80,16 @@ private:
 
     QTimer* move_delay_timer;
 
+    int coordinate_display_image_index;
     int cursor_index;
-    int purple_pixel_index;
     int hyper_space_index;
+    int name_display_image_index;
     int quasi_space_start_index;
 
     StarChart star_chart{};
 
-    TextManager text_manager;
+    TextField coordinate_display;
+    TextField name_display;
 };
 
 #endif // GRAPHICSVIEWER_H

@@ -3,6 +3,7 @@
 
 #include "coordinate.h"
 #include "graphicsviewer.h"
+#include "textfieldfunctions.h"
 
 GraphicsViewer::GraphicsViewer(QWidget *parent):
     ImageViewer{parent}
@@ -11,15 +12,19 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
     setMouseTracking(true);
 
     loadAssets();
-    text_manager.setPixelImage(getPurplePixelImage());
 
     setAttribute(Qt::WA_NativeWindow);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
 
-Image* GraphicsViewer::getPurplePixelImage()
+Image* GraphicsViewer::getCoordinateDisplayPixelImage()
 {
-    return &images[purple_pixel_index];
+    return &images[coordinate_display_image_index];
+}
+
+Image* GraphicsViewer::getNameDisplayPixelImage()
+{
+    return &images[name_display_image_index];
 }
 
 void GraphicsViewer::showHyperSpaceMap()
@@ -29,7 +34,7 @@ void GraphicsViewer::showHyperSpaceMap()
 
 void GraphicsViewer::showMap(int map_index)
 {
-    text_manager.clearText();
+    name_display.clearText();
     setAllMapsInvisible();
     images[map_index].instances[0].setIsActive(true);
 
@@ -255,10 +260,23 @@ void GraphicsViewer::loadAssets()
 {
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
-    loadPurplePixel();
+    loadCoordinateDisplay();
+    loadNameDisplay();
     loadCursor();
 
     loadTimer();
+}
+
+void GraphicsViewer::loadCoordinateDisplay()
+{
+    int coordinate_display_field_width{53};
+
+    coordinate_display.setFieldPosition(194, 1);
+    coordinate_display.setFieldWidth(coordinate_display_field_width);
+
+    coordinate_display_image_index = images.size();
+    addImage(":/images/purple pixel.png", coordinate_display.field_height * coordinate_display_field_width);
+    coordinate_display.setPixelImage(getCoordinateDisplayPixelImage());
 }
 
 void GraphicsViewer::loadCursor()
@@ -273,10 +291,17 @@ void GraphicsViewer::loadHyperSpaceMap()
     addImage(":/images/in-game map.png", 1);
 }
 
-void GraphicsViewer::loadPurplePixel()
+void GraphicsViewer::loadNameDisplay()
 {
-    purple_pixel_index = images.size();
-    addImage(":/images/purple pixel.png", text_manager.getRequiredNumberPixels());
+    int name_display_field_width{171};
+
+    name_display.setIsTextCentered(true);
+    name_display.setFieldPosition(8, 1);
+    name_display.setFieldWidth(name_display_field_width);
+
+    name_display_image_index = images.size();
+    addImage(":/images/purple pixel.png", name_display.field_height * name_display_field_width);
+    name_display.setPixelImage(getNameDisplayPixelImage());
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
@@ -374,7 +399,8 @@ void GraphicsViewer::setRealCursorPosition(int grid_position_x, int grid_positio
 
 void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position_y)
 {
-    text_manager.clearText();
+    coordinate_display.clearText();
+    name_display.clearText();
 
     if (images[hyper_space_index].instances[0].is_active())
     {
@@ -384,13 +410,13 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         {
             true_space_position_x = star_system->true_space_position_x();
             true_space_position_y = star_system->true_space_position_y();
-            text_manager.drawText(star_system->name());
+            name_display.drawText(star_system->name());
         }
         else if (portal_exit != nullptr)
         {
             true_space_position_x = portal_exit->true_space_position_x();
             true_space_position_y = portal_exit->true_space_position_y();
-            text_manager.drawText(portal_exit->name());
+            name_display.drawText(portal_exit->name());
         }
         else
         {
@@ -405,7 +431,7 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         {
             true_space_position_x = portal_entrance->true_space_position_x();
             true_space_position_y = portal_entrance->true_space_position_y();
-            text_manager.drawText(portal_entrance->name());
+            name_display.drawText(portal_entrance->name());
         }
         else
         {
@@ -414,7 +440,10 @@ void GraphicsViewer::setTrueSpacePosition(int grid_position_x, int grid_position
         }
     }
 
-    text_manager.updateCoordinates(true_space_position_x, true_space_position_y);
+    Digits true_space_digits_x = tff::extractDigits(true_space_position_x);
+    Digits true_space_digits_y = tff::extractDigits(true_space_position_y);
+
+    coordinate_display.drawText(tff::formatDigits(true_space_digits_x) + " : " + tff::formatDigits(true_space_digits_y));
 }
 
 void GraphicsViewer::updateScale()
@@ -438,7 +467,8 @@ void GraphicsViewer::updateScale()
             }
         }
 
-        text_manager.refreshScale();
+        coordinate_display.refreshScale();
+        name_display.refreshScale();
 
         setCosmeticCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
         setRealCursorPosition(cursor_grid_position_x, cursor_grid_position_y);
