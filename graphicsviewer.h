@@ -38,10 +38,12 @@ private:
     void handleArrowKeyRelease(QKeyEvent* event);
     bool isArrowKey(QKeyEvent* event);
     void loadAssets();
+    void loadBorder();
     void loadCoordinateDisplay();
     void loadCursor();
     void loadHyperSpaceMap();
     void loadNameDisplay();
+    void loadPortals();
     void loadQuasiSpaceMaps();
     void loadTimer();
     void onTimer();
@@ -68,7 +70,7 @@ private:
     const static int top_grid_bound{10};
 
     const static int number_quasi_space_maps{15};
-    const static int number_total_images{19};
+    const static int number_total_images{21};
 
     int height;
     int width;
@@ -82,10 +84,12 @@ private:
 
     QTimer* move_delay_timer;
 
+    int border_index;
     int coordinate_display_image_index;
     int cursor_index;
     int hyper_space_index;
     int name_display_image_index;
+    int portals_index;
     int quasi_space_start_index;
 
     StarChart star_chart{};

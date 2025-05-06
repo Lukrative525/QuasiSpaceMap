@@ -4,8 +4,10 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texture_coordinates;
 layout(location = 2) in vec3 instance_position;
 layout(location = 3) in vec2 instance_size;
+layout(location = 4) in float instance_opacity;
 
-out vec2 TexCoord;
+out vec2 tex_coord;
+out float frag_alpha;
 
 uniform mat4 model_view_projection;
 
@@ -19,5 +21,6 @@ void main()
 
     gl_Position = model_view_projection * vec4(world_position, 1.0);
 
-    TexCoord = texture_coordinates;
+    tex_coord = texture_coordinates;
+    frag_alpha = instance_opacity;
 }

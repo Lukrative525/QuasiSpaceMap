@@ -7,9 +7,14 @@ ImageInstance::ImageInstance(float size_x, float size_y):
     setScale(1);
 }
 
+float ImageInstance::alpha()
+{
+    return alpha_property;
+}
+
 InstanceData ImageInstance::getData() const
 {
-    return {x_property, y_property, z_property, size_x_property, size_y_property};
+    return {x_property, y_property, z_property, size_x_property, size_y_property, alpha_property};
 }
 
 bool ImageInstance::is_active() const
@@ -20,6 +25,11 @@ bool ImageInstance::is_active() const
 float ImageInstance::scale() const
 {
     return scale_property;
+}
+
+void ImageInstance::setAlpha(float new_value)
+{
+    alpha_property = new_value;
 }
 
 void ImageInstance::setIsActive(bool new_value)

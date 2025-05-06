@@ -5,15 +5,18 @@ struct InstanceData
 {
     float x, y, z;
     float size_x, size_y;
+    float alpha;
 };
 
 class ImageInstance
 {
 public:
     ImageInstance(float size_x, float size_y);
+    float alpha();
     InstanceData getData() const;
     bool is_active() const;
     float scale() const;
+    void setAlpha(float new_value);
     void setIsActive(bool new_value);
     void setScale(float new_value);
     void setX(float new_value);
@@ -28,6 +31,7 @@ public:
     float z() const;
 
 private:
+    float alpha_property{1};
     bool is_active_property{true};
     float scale_property{1};
     float size_x_base_property;

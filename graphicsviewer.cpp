@@ -20,6 +20,7 @@ GraphicsViewer::GraphicsViewer(QWidget *parent):
 void GraphicsViewer::showHyperSpaceMap()
 {
     showMap(hyper_space_index);
+    images[portals_index].instances[0].setIsActive(true);
 }
 
 void GraphicsViewer::showMap(int map_index)
@@ -260,11 +261,19 @@ void GraphicsViewer::loadAssets()
 {
     loadHyperSpaceMap();
     loadQuasiSpaceMaps();
+    loadPortals();
+    loadCursor();
+    loadBorder();
     loadCoordinateDisplay();
     loadNameDisplay();
-    loadCursor();
 
     loadTimer();
+}
+
+void GraphicsViewer::loadBorder()
+{
+    border_index = images.size();
+    addImage(":/images/border.png", 1);
 }
 
 void GraphicsViewer::loadCoordinateDisplay()
@@ -303,6 +312,12 @@ void GraphicsViewer::loadNameDisplay()
     name_display_image_index = images.size();
     addImage(":/images/purple pixel.png", name_display.field_height * name_display_field_width);
     name_display.setPixelImage(getNameDisplayPixelImage());
+}
+
+void GraphicsViewer::loadPortals()
+{
+    portals_index = images.size();
+    addImage(":/images/portals.png", 1);
 }
 
 void GraphicsViewer::loadQuasiSpaceMaps()
@@ -377,6 +392,7 @@ void GraphicsViewer::setAllMapsInvisible()
     {
         images[index].instances[0].setIsActive(false);
     }
+    images[portals_index].instances[0].setIsActive(false);
 }
 
 void GraphicsViewer::setCosmeticCursorPosition(int grid_position_x, int grid_position_y)

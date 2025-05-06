@@ -21,5 +21,7 @@
         <file>shaders/vertex_shader.vert</file>
         <file>images/purple pixel.png</file>
         <file>images/white pixel.png</file>
+        <file>images/border.png</file>
+        <file>images/portals.png</file>
     </qresource>
 </RCC>
