@@ -176,7 +176,7 @@ void ImageViewer::initializeImageGeometry(Image& image)
     glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)offsetof(InstanceData, size_x));
     glVertexAttribDivisor(3, 1);
 
-    // Attribute 3: opacity (alpha)
+    // Attribute 4: opacity (alpha)
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(InstanceData), (void*)offsetof(InstanceData, alpha));
     glVertexAttribDivisor(4, 1);
